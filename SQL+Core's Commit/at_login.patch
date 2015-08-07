@@ -1,0 +1,83 @@
+# HG changeset patch
+# User RDC
+# Date 1356205970 0
+# Node ID 3723de555d1d2ec33dbb683323b8e6f0159ee38b
+# Parent  99600389f95783ee9e00aa95084f084f99d981d2
+Character Migration Tool
+
+diff -r 99600389f957 -r 3723de555d1d src/server/game/Entities/Player/Player.h
+--- a/src/server/game/Entities/Player/Player.h	Sat Dec 22 18:00:05 2012 +0000
++++ b/src/server/game/Entities/Player/Player.h	Sat Dec 22 19:52:50 2012 +0000
+@@ -506,7 +506,8 @@
+     AT_LOGIN_RESET_PET_TALENTS = 0x10,
+     AT_LOGIN_FIRST             = 0x20,
+     AT_LOGIN_CHANGE_FACTION    = 0x40,
+-    AT_LOGIN_CHANGE_RACE       = 0x80
++    AT_LOGIN_CHANGE_RACE       = 0x80,
++    AT_LOGIN_UPDATE_NAME       = 0x100
+ };
+ 
+ typedef std::map<uint32, QuestStatusData> QuestStatusMap;
+diff -r 99600389f957 -r 3723de555d1d src/server/game/Handlers/CharacterHandler.cpp
+--- a/src/server/game/Handlers/CharacterHandler.cpp	Sat Dec 22 18:00:05 2012 +0000
++++ b/src/server/game/Handlers/CharacterHandler.cpp	Sat Dec 22 19:52:50 2012 +0000
+@@ -988,6 +988,22 @@
+ 
+     if (pCurrChar->HasAtLoginFlag(AT_LOGIN_FIRST))
+         pCurrChar->RemoveAtLoginFlag(AT_LOGIN_FIRST);
++    if(pCurrChar->HasAtLoginFlag(AT_LOGIN_UPDATE_NAME))
++    {
++//        sWorld->UpdateCharacterNameData(pCurrChar->GetGUIDLow() );
++        std::string nameUpdate_AT_LOGIN_UPDATE_NAME;
++        QueryResult result = CharacterDatabase.PQuery("SELECT name FROM characters WHERE `guid` = '%u'", pCurrChar->GetGUIDLow());
++        if(result)
++        {
++            //sLog->outErrorDb("SHIT!@ %u", pCurrChar->GetGUIDLow());
++            nameUpdate_AT_LOGIN_UPDATE_NAME = (*result)[0].GetString();
++            sWorld->UpdateCharacterNameData(pCurrChar->GetGUIDLow(), nameUpdate_AT_LOGIN_UPDATE_NAME);
++            sWorld->AddCharacterNameData(pCurrChar->GetGUIDLow(), nameUpdate_AT_LOGIN_UPDATE_NAME, pCurrChar->getGender(), pCurrChar->getRace(), pCurrChar->getClass(), pCurrChar->getLevel());
++        }
++//        if(!sWorld->UpdateCharacterNameData(pCurrChar->GetGUIDLow(), pCurrChar->GetName(), pCurrChar->getGender(), pCurrChar->getRace()))
++//           sWorld->AddCharacterNameData(pCurrChar->GetGUIDLow(), pCurrChar->GetName(), pCurrChar->getGender(), pCurrChar->getRace(), pCurrChar->getClass());
++        pCurrChar->RemoveAtLoginFlag(AT_LOGIN_UPDATE_NAME);
++    }
+ 
+     // show time before shutdown if shutdown planned.
+     if (sWorld->IsShuttingDown())
+diff -r 99600389f957 -r 3723de555d1d src/server/game/World/World.cpp
+--- a/src/server/game/World/World.cpp	Sat Dec 22 18:00:05 2012 +0000
++++ b/src/server/game/World/World.cpp	Sat Dec 22 19:52:50 2012 +0000
+@@ -3080,11 +3080,11 @@
+     data.m_level = level;
+ }
+ 
+-void World::UpdateCharacterNameData(uint32 guid, std::string const& name, uint8 gender /*= GENDER_NONE*/, uint8 race /*= RACE_NONE*/)
++bool World::UpdateCharacterNameData(uint32 guid, std::string const& name, uint8 gender /*= GENDER_NONE*/, uint8 race /*= RACE_NONE*/)
+ {
+     std::map<uint32, CharacterNameData>::iterator itr = _characterNameDataMap.find(guid);
+     if (itr == _characterNameDataMap.end())
+-        return;
++        return false;
+ 
+     itr->second.m_name = name;
+ 
+@@ -3093,6 +3093,7 @@
+ 
+     if (race != RACE_NONE)
+         itr->second.m_race = race;
++    return true;
+ }
+ 
+ void World::UpdateCharacterNameDataLevel(uint32 guid, uint8 level)
+diff -r 99600389f957 -r 3723de555d1d src/server/game/World/World.h
+--- a/src/server/game/World/World.h	Sat Dec 22 18:00:05 2012 +0000
++++ b/src/server/game/World/World.h	Sat Dec 22 19:52:50 2012 +0000
+@@ -730,7 +730,7 @@
+ 
+         CharacterNameData const* GetCharacterNameData(uint32 guid) const;
+         void AddCharacterNameData(uint32 guid, std::string const& name, uint8 gender, uint8 race, uint8 playerClass, uint8 level);
+-        void UpdateCharacterNameData(uint32 guid, std::string const& name, uint8 gender = GENDER_NONE, uint8 race = RACE_NONE);
++        bool UpdateCharacterNameData(uint32 guid, std::string const& name, uint8 gender = GENDER_NONE, uint8 race = RACE_NONE);
+         void UpdateCharacterNameDataLevel(uint32 guid, uint8 level);
+         void DeleteCharaceterNameData(uint32 guid) { _characterNameDataMap.erase(guid); }
+ 

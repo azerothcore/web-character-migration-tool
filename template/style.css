@@ -1,0 +1,79 @@
+body {
+    background      : black;
+    text-align      : center;
+    vertical-align  : middle;
+    font-family     : Tahoma, Helvetica, sans-serif, Verdana, Geneva, sans-serif;
+    font-size       : 12px;
+    overflow-x      : hidden !important;
+}
+
+.generallink {
+    color           : #339933;
+    text-decoration : none;
+    font-size       : 13px;
+}
+
+th#caption {
+    background      : url('images/table_nadpis.jpg');
+    height          : 29px;
+    font-size       : 14pt;
+    font-family     : Arial, sans-serif;
+    font-weight     : normal;
+    text-align      : left;
+    color           : #542003;
+}
+
+td  {
+    font-size       : 11px;
+    color           : #271103;
+}
+
+.caption {
+    font-family     : Arial, sans-serif;
+    color           : #232d39;
+    font-size       : 24px;
+}
+
+input.EnterData {
+    border          : 1px solid #a5894d;
+    width           : 250px;
+    padding         : 3.6px;
+    color           : #000000;
+}
+
+.auhtor {
+    text-decoration : none;
+    color           : #fff367;
+}
+
+a.login {
+    font-size       : 11pt;
+    font-weight     : bold;
+    line-height     : 36px;
+    display         : block;
+    background      : url('images/login.png') no-repeat;
+    width           : 100px;
+    height          : 36px;
+}    
+
+a.login:link,
+a.login:visited {
+    color           : #ffffff;
+    text-decoration : none;
+}
+
+a.login:hover {
+    color           : #444444;
+}
+
+.MythTable {
+    color           : #505070 !important;
+    font-size       : 12px !important;
+    border          : 1px dotted #8080A0 !important;
+    padding-right   : 2px !important; 
+}
+
+.MythInput {
+    white-space     : nowrap;
+    margin-bottom   : 20px;
+}
