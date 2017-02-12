@@ -5,9 +5,21 @@
  * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
 */
 
-require_once 'core/init.php';
+class Config {
+	public static function get($path = null) {
+		if($path) {
+			$config = $GLOBALS['config'];
+			$path = explode('/', $path);
 
-$user = new User();
-$user->logout();
+			foreach($path as $bit) {
+				if(isset($config[$bit])) {
+					$config = $config[$bit];
+				}
+			}
 
-Redirect::to('index.php');
+			return $config;
+		}
+
+		return false;
+	}
+}

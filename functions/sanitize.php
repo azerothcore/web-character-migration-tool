@@ -5,9 +5,6 @@
  * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
 */
 
-require_once 'core/init.php';
-
-$user = new User();
-$user->logout();
-
-Redirect::to('index.php');
+function escape($string) {
+	return htmlentities($string, ENT_QUOTES, 'UTF-8');
+}

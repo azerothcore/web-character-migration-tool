@@ -1,23 +1,31 @@
 <?php
+/*
+ Copyright (C) 2017+     AzerothCore <www.azerothcore.org>, released under GNU GPL v2 license: http://github.com/azerothcore/azerothcore-wotlk/LICENSE-GPL2
+ * Copyright (C) 2008-2016 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
+*/
 
-    ob_start();
-    session_start();
+require_once 'core/init.php';
+
+// START OF HELL DOWN BELOW...
 
     if     (isset($_POST['load']))      $step = 1;
     else if(isset($_POST['rename']))    $step = 2;
     else                                $step = 3;
-    if(!isset($_SESSION['loged']))
-        Header('Location: index.php');
+    $user = new User();
+    if(!$user->isLoggedIn()) {
+        Redirect::to('index.php');
+    }
 
     include('template/t_header.php');
     include('_transfer/language.php');
     include_once("_transfer/t_dbfunctions.php");
     include_once("_transfer/t_config.php");
 
-    $ID         = $_SESSION['id'];
+    $ID = escape($user->data()->id);
 ?>
 <table width = "800" align = "center" cellpadding = "0" cellspacing = "0">
-    <tr><td align = "right"><?php echo $write[5]."<strong> ". mb_strtoupper($_SESSION['user'], 'UTF-8') ."</strong>! || <a href=\"playerside.php\" class='generallink'>$write[6]</a> || <a href=\"logout.php\" class='generallink'>$write[7]</a>"; ?></td></tr>
+    <tr><td align = "right"><?php echo $write[5]."<strong> ". mb_strtoupper(escape($user->data()->username), 'UTF-8') ."</strong>! || <a href=\"playerside.php\" class='generallink'>$write[6]</a> || <a href=\"logout.php\" class='generallink'>$write[7]</a>"; ?></td></tr>
 </table><br>
 <script type = "text/javascript" src = "template/jquery-1.7.2.min.js"></script>
 <script type = "text/javascript">

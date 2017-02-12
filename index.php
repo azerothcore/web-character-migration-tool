@@ -1,52 +1,53 @@
 <?php
+/*
+ Copyright (C) 2017+     AzerothCore <www.azerothcore.org>, released under GNU GPL v2 license: http://github.com/azerothcore/azerothcore-wotlk/LICENSE-GPL2
+ * Copyright (C) 2008-2016 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
+*/
 
+require_once 'core/init.php';
+require_once '_transfer/t_config.php';
+require_once '_transfer/language.php';
+require_once 'template/t_header.php';
 
-    ob_start();
-    session_start();
+$user = new User();
+if($user->isLoggedIn()) {
+    Redirect::to('playerside.php');
+}
 
-    include_once('_transfer/t_config.php');
+if(Input::exists()) {
+    if(Token::check(Input::get('token'))) {
+        $validate   = new Validation();
+        $validation = $validate->check($_POST, array(
+            'username' => array('required' => true),
+            'password' => array('required' => true)
+        ));
 
-    if(isset($_SESSION['loged'])) {
-        Header('Location: playerside.php');
-    } else {
-        include_once('_transfer/language.php');
+        if($validation->passed()) {
+            $user  = new User();
+            $login = $user->login(Input::get('username'), Input::get('password'));
 
-        if(!isset($_POST['username']) || !isset($_POST['username'])) {
-            include_once('template/t_header.php');
-            $reason = "<font color=\"darkred\">". $write[2] ."</font><br>";
-        } else if($captchaEnable != 0 && ($_SESSION['CaptchaText'] != $_POST['CaptchaText'])) {
-            include_once('template/t_header.php');
-            $reason = "<font color=\"darkred\">Wrong Captcha code!</font><br>";
+            if($login) {
+                Redirect::to('playerside.php');
+            }
         } else {
-            $username       = strtoupper(addslashes($_POST['username']));
-            $SHA1Password   = SHA1Password($username, strtoupper(addslashes($_POST['password'])));
-
-            $connection     = mysql_connect($AccountDBHost, $DBUser, $DBPassword);
-            mysql_select_db($AccountDB, $connection);
-            mysql_set_charset('utf8',$connection);
-
-            $query  = mysql_query("SELECT `id`,`username` FROM `account` WHERE `username` = \"". _Y($username) ."\" AND `sha_pass_hash` = \"". _Y($SHA1Password) ."\";", $connection) or die(mysql_error());
-            $result = mysql_fetch_array($query);
-            mysql_close($connection);
-
-            if($result['username'] == "") {
-                include_once('template/t_header.php');
-                $reason = "<font color=\"darkred\">Wrong Password!</font><br>";
-            } else if($result['username']) {
-                $_SESSION['loged']  = $SHA1Password;
-                $_SESSION['id']     = $result['id'];
-                $_SESSION['user']   = $result['username'];
-                Header('Location: playerside.php');
+            foreach($validation->errors() as $error) {
+                echo $error, '<br>';
             }
         }
+    }
+}
+
+// START OF HELL DOWN BELOW...
+
 ?>
 <img src = "template/images/logon_vrch.jpg">
 <table align = "center" style = "background : url(template/images/logon_obsah.jpg); width : 689px; height: 289px;">
 <tr><th>
     <table width = "255" align = "center" valign = "top">
     <tr><td class = "caption"><?php echo $write[1]; ?></td></tr>
-    <tr><td style = "font-face : Times New Roman; color : #826230; font-size : 12px; height : 65px";><?php echo $reason; ?></td></tr>
-        <form action = "<?php echo $_SERVER['PHP_SELF'] ?>" method = "POST" id = "login">
+    <tr><td style = "font-face : Times New Roman; color : #826230; font-size : 12px; height : 65px";></td></tr>
+        <form action="" method="POST" id="login">
             <tr><td><?php echo $write[3]; ?><br><input type = "text" class = "EnterData" name = "username" onkeydown = "keyDown(event)"></td></tr>
             <tr><td><?php echo $write[4]; ?><br><input type = "password" class = "EnterData" name = "password" onkeydown = "keyDown(event)"></td></tr>
             <?php if($captchaEnable != 0) echo "
@@ -55,6 +56,8 @@
                 <input style = \"formul\" name = \"CaptchaText\" type = \"text\" size = \"6\" maxlength = \"8\" onkeydown = \"keyDown(event)\"></td>
             </tr>"?>
             <tr><td align = center><a href = '#' onClick = "document.getElementById('login').submit();" class = "login" ><?php echo $write[1]; ?></a></td></tr>
+
+        <input type="hidden" name="token" value="<?=Token::generate();?>">
         </form>
     </table>
 </th></tr>
@@ -70,16 +73,4 @@ function keyDown(event)
 }
 </script>
 <img src = "template/images/logon_spodek.jpg">
-<?php include('template/t_footer.php');
-    }
-
-    ob_end_flush();
-
-    function SHA1Password($username, $password) {
-        return SHA1($username .':'. $password);
-    }
-
-    function _Y($A) {
-        return get_magic_quotes_gpc() ? stripslashes(mysql_real_escape_string($A)) : mysql_real_escape_string($A);
-    }
-?>
+<?=include('template/t_footer.php');?>
