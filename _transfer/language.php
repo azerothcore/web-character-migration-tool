@@ -199,7 +199,7 @@
             $write[77] = 'Start Transfer, STEP 2';
             $write[78] = 'Welcome to <b>ADMIN PANEL</b> When you check Player Characters, Please click "<font color = "green">Approve</font>" or "<font color = "red">Deny</font>" for approving or deny their transfers';
             $write[79] = 'Select in which realm you want to tranfer your character';
-            $write[80] = 'Characters Transfer / Migration Managment System';
+            $write[80] = 'Migration Managment System';
             $write[84] = 'Cancel';
             $write[85] = 'Approve';
             $write[86] = 'Deny';

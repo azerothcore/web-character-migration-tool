@@ -1,10 +1,16 @@
 body {
-    background      : black;
+    background      : #1E0000;
+    background-image: url('images/background.jpg');
+    background-size : 2350px 950px;
     text-align      : center;
     vertical-align  : middle;
     font-family     : Tahoma, Helvetica, sans-serif, Verdana, Geneva, sans-serif;
     font-size       : 12px;
     overflow-x      : hidden !important;
+    padding-top     : 15px;
+}
+h1 {
+    color: #ffffff;
 }
 
 .generallink {

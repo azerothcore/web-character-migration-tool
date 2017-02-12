@@ -9,10 +9,10 @@
     $AchievementsMinCount   = 50;           // Minimum ammount of Achievements.
     $PLAYTIME               = 10;           // Minimum Playtime. Counted as: last archievment date - first archievment date
 
-    $AccountDB          = "wow_335a_login"; // Your Account DB Name
+    $AccountDB          = "auth"; // Your Account DB Name
     $AccountDBHost      = "127.0.0.1";      // Your Account DB Host
     $DBUser             = "root";           // Your DB User
-    $DBPassword         = "password";       // Your DB Password
+    $DBPassword         = "sTAr5r2mawR";       // Your DB Password
 
     $SOAPUser           = "admin";          // SOAP USER
     $SOAPPassword       = "admin";          // SOAP USER PASSWORD
@@ -95,7 +95,7 @@
     }
                                                     // if do not exist stay -1, if no then put info, FOR CHARACTERS DBs
     function _CharacterDBSwitch($ID) {              // Realm ID = Realm ID From Realmlist table
-        $CharactersDB1      = "wow_335a_characters";// Realm 1 Character DB
+        $CharactersDB1      = "characters";// Realm 1 Character DB
         $CharactersDB2      = -1;                   // Realm 2 Character DB
         $CharactersDB3      = -1;                   // Realm 3 Character DB
         $CharactersDB4      = -1;                   // Realm 4 Character DB

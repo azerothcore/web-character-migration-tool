@@ -17,6 +17,8 @@
         </script>
     </head>
     <body>
+        <img src = "template/images/logo-small.png"/>
+        <h1>AZEROTHCORE</h1>
         <table width = "987" cellpadding = "0" cellspacing = "0" border = "0" align = "center" style = "background:url('template/images/table.jpg')">
         <tr><th colspan = "2"><img src = "template/images/table_vrch_.jpg"/></th></tr>
         <tr>
