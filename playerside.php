@@ -30,7 +30,7 @@ require_once 'core/init.php';
 <script type = "text/javascript" src = "template/jquery-1.7.2.min.js"></script>
 <script type = "text/javascript">
 <?php
-    if(!_CheckGMAccess($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $ID, $GMLevel)) {
+    if(!_CheckGMAccess($AccountDBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $ID, $GMLevel)) {
 echo "
     function DoCancel( id, Realm, Guid ) {
         $.ajax({
@@ -122,7 +122,7 @@ echo "
     switch($step) {
         case 1: include("_transfer/step1.php"); break;
         case 2: include("_transfer/step2.php"); break;
-        case 3: FlushStatisticTable($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $ID, $GMLevel, $write[78], $write[75], $write[60], $write[65], $write[61],
+        case 3: FlushStatisticTable($AccountDBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $ID, $GMLevel, $write[78], $write[75], $write[60], $write[65], $write[61],
         $write[85], $write[86], $write[30], $write[31], $write[32], $write[33], $write[34], $write[84]);
             break;
     }
@@ -134,16 +134,16 @@ echo "
 <?php include ('template/t_footer.php');
     ob_end_flush();
 
-    function FlushStatisticTable($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $ID, $GMLevel,
+    function FlushStatisticTable($AccountDBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $ID, $GMLevel,
         $TEXT1, $TEXT2, $TEXT3, $TEXT4, $TEXT5, $TEXT6, $TEXT7, $TEXT8, $TEXT9, $TEXT10, $TEXT11, $TEXT12, $TEXT13)
     {
-        if(_CheckGMAccess($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $ID, $GMLevel)) {
+        if(_CheckGMAccess($AccountDBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $ID, $GMLevel)) {
             echo "<div align = right class = \"MythTable\" style = \"width: 100%; padding-right: 2px;font-family: 'Tahoma';\">". $TEXT1 ."</div>
             <br>";
-            $connection = mysql_connect($AccountDBHost, $DBUser, $DBPassword);
-            _SelectDB($AccountDB, $connection);
-            $query = mysql_query("SELECT * FROM `account_transfer` WHERE `gmAccount` = ". $ID ." ORDER BY `id` DESC LIMIT 25;", $connection);
-            mysql_close($connection);
+            $connection = mysqli_connect($AccountDBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT);
+            _SelectDB($connection);
+            $query = mysqli_query($connection,"SELECT * FROM `account_transfer` WHERE `gmAccount` = ". $ID ." ORDER BY `id` DESC LIMIT 25;");
+            print_r(mysqli_error($connection));mysqli_close($connection);
         } else {
             echo "
             <div align = right style = \"width: 100%; padding-right: 2px;font-family: 'Tahoma'; \">". $TEXT2 ."</div>
@@ -156,16 +156,17 @@ echo "
             </div>
             <div align = right class = \"MythTable\" style = \"width: 100%; padding-right: 2px;font-family: 'Tahoma';\">". $TEXT5 ."</div>";
 
-            $connection = mysql_connect($AccountDBHost, $DBUser, $DBPassword);
-            _SelectDB($AccountDB, $connection);
-            $query = mysql_query("SELECT * FROM `account_transfer` WHERE `cAccount` = ". $ID ." ORDER BY `id` DESC LIMIT 25;", $connection);
-            mysql_close($connection);
+            $connection = mysqli_connect($AccountDBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT);
+            _SelectDB($connection);
+            $query = mysqli_query($connection,"SELECT * FROM `account_transfer` WHERE `cAccount` = ". $ID ." ORDER BY `id` DESC LIMIT 25;");
+			 print_r(mysqli_error($connection));
+            mysqli_close($connection);
         }
         echo "
             <div style = \"white-space: nowrap; border-top-width: 1px; border-top-style: solid; padding-top: 8px; margin-top: 8px;\">
             <table width = 100% align = center >
                 <tr bgcolor = #FFEAC7>";
-        if(_CheckGMAccess($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $ID, $GMLevel)) {
+        if(_CheckGMAccess($AccountDBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $ID, $GMLevel)) {
             echo "
                 <td>\"OUR\" & \"OLD\" Name: </td>
                 <td>\"OUR\" & \"OLD\" Realm:</td>
@@ -175,12 +176,13 @@ echo "
                 <td>Server URL:             </td>
                 <td>Admin Options:          </td>
             </tr>";
-            while($row = mysql_fetch_array($query)) {
+			if(!empty($query))
+            while($row = mysqli_fetch_array($query)) {
                 if($row["cStatus"] == 0)
                     echo "
                     <tr bgcolor = #FFFFCC>
                         <td>". $row["cNameNEW"] ." / ". $row["cNameOLD"] ."</td>
-                        <td>". _CheckRealm($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $row["cRealm"]) ." / ". $row["oRealm"] ."</td>
+                        <td>". _CheckRealm($AccountDBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $row["cRealm"]) ." / ". $row["oRealm"] ."</td>
                         <td>". $row["oRealmlist"]               ."</td>
                         <td>". $row["oAccount"]                 ."</td>
                         <td>". base64_decode($row["oPassword"]) ."</td>
@@ -200,12 +202,12 @@ echo "
                 <td>Status:         </td>
                 <td>Options:        </td>
             </tr>";
-            while($row = mysql_fetch_array($query)) {
+            while($row = mysqli_fetch_array($query)) {
                 echo "
                     <tr bgcolor = #FFFFCC>
                         <td align = center bgcolor = #FFEAC7>". $row["id"]  ."</td>
                         <td>". $row["cNameNEW"]                             ."</td>
-                        <td align = center>". _CheckRealm($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $row["cRealm"]) ."</td>
+                        <td align = center>". _CheckRealm($AccountDBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $row["cRealm"]) ."</td>
                         <td bgcolor = #FFEAC7 ". _CheckReason($row["cStatus"], $row["Reason"]) .">". _CheckStatus($row["cStatus"], $TEXT8, $TEXT9, $TEXT10, $TEXT11, $TEXT12, $row["Reason"])   ."</td>
                         <td align = center>";
                 if($row["cStatus"] == 0)

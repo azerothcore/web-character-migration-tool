@@ -52,7 +52,7 @@ class User {
 
 	public function login($username = null, $password = null) {
 		$user = $this->find($username);
-		$hash = Hash::marble(strtoupper(addslashes($username)), strtoupper(addslashes($password)));
+		$hash = strtoupper(sha1(strtoupper(($username)).":".strtoupper(($password))));
 
 		if($user) {
 			if($this->data()->sha_pass_hash === $hash) {

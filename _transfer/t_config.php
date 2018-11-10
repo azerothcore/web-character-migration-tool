@@ -11,8 +11,9 @@
 
     $AccountDB          = "auth"; // Your Account DB Name
     $AccountDBHost      = "127.0.0.1";      // Your Account DB Host
+    $DB_PORT         	= "3306";       // Your DB Port
     $DBUser             = "root";           // Your DB User
-    $DBPassword         = "sTAr5r2mawR";       // Your DB Password
+    $DBPassword         = "root";       // Your DB Password
 
     $SOAPUser           = "admin";          // SOAP USER
     $SOAPPassword       = "admin";          // SOAP USER PASSWORD

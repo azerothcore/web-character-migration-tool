@@ -16,7 +16,6 @@ if($user->isLoggedIn()) {
 }
 
 if(Input::exists()) {
-    if(Token::check(Input::get('token'))) {
         $validate   = new Validation();
         $validation = $validate->check($_POST, array(
             'username' => array('required' => true),
@@ -35,7 +34,6 @@ if(Input::exists()) {
                 echo $error, '<br>';
             }
         }
-    }
 }
 
 // START OF HELL DOWN BELOW...
