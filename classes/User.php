@@ -56,6 +56,7 @@ class User {
 
 		if($user) {
 			if($this->data()->sha_pass_hash === $hash) {
+				$_SESSION["id"] = $this->data()->id;
 				Session::put($this->_sessionName, $this->data()->id);
 
 				return true;

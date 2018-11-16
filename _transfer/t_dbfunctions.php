@@ -82,11 +82,11 @@
     }
 
     function UPDATEReviewer($DBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $ACCOUNT_ID) {
-        $Realm1     = CountQueue(_HostDBSwitch(1), $DBUser, $DBPassword, _CharacterDBSwitch(1), $ACCOUNT_ID);
-        $Realm2     = CountQueue(_HostDBSwitch(2), $DBUser, $DBPassword, _CharacterDBSwitch(2), $ACCOUNT_ID);
-        $Realm3     = CountQueue(_HostDBSwitch(3), $DBUser, $DBPassword, _CharacterDBSwitch(3), $ACCOUNT_ID);
-        $Realm4     = CountQueue(_HostDBSwitch(4), $DBUser, $DBPassword, _CharacterDBSwitch(4), $ACCOUNT_ID);
-        $Realm5     = CountQueue(_HostDBSwitch(5), $DBUser, $DBPassword, _CharacterDBSwitch(5), $ACCOUNT_ID);
+        $Realm1     = CountQueue(_HostDBSwitch(1), $DB_PORT, $DBUser, $DBPassword, _CharacterDBSwitch(1), $ACCOUNT_ID);
+        $Realm2     = CountQueue(_HostDBSwitch(2), $DB_PORT, $DBUser, $DBPassword, _CharacterDBSwitch(2), $ACCOUNT_ID);
+        $Realm3     = CountQueue(_HostDBSwitch(3), $DB_PORT, $DBUser, $DBPassword, _CharacterDBSwitch(3), $ACCOUNT_ID);
+        $Realm4     = CountQueue(_HostDBSwitch(4), $DB_PORT, $DBUser, $DBPassword, _CharacterDBSwitch(4), $ACCOUNT_ID);
+        $Realm5     = CountQueue(_HostDBSwitch(5), $DB_PORT, $DBUser, $DBPassword, _CharacterDBSwitch(5), $ACCOUNT_ID);
         $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         
         $query = mysqli_query($connection,"UPDATE `account_transfer_queue` SET
@@ -103,7 +103,7 @@
         if($CharacterDB < 0 || $DBHost < 0)
             return 0;
         else {
-            $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
+            $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$CharacterDB,$DB_PORT) or die(mysqli_error($connection));
             _SelectDB($CharacterDB);
             $query = mysqli_query($connection,"SELECT COUNT(*) FROM `characters` WHERE `account` = ". $ACCOUNT_ID .";") or die(mysqli_error($connection));
             $result = mysqli_fetch_array($query);
@@ -123,7 +123,7 @@
     }
 
     function GetCharacterGuid($DBHost, $DB_PORT, $DBUser, $DBPassword, $CharactersDB) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$CharactersDB,$DB_PORT) or die(mysqli_error($connection));
         _SelectDB($connection);
         $query = mysqli_query($connection,"SELECT MAX(`guid`) FROM `characters` WHERE `guid` BETWEEN 1000000 AND 1999999;") or die(mysqli_error($connection));
         $row = mysqli_fetch_array($query);
@@ -174,7 +174,9 @@
     }
 
     function _SelectDB($connection) {
-        mysqli_set_charset($connection,"utf8");
+        //mysqli_set_charset($connection,"utf8");
+		//mysqli_query($connection,"SET CHARACTER SET 'utf8'");
+		//mysqli_query($connection,"SET SESSION collation_connection ='utf8_general_ci'");
     }
 
     function _CheckStatus($VALUE, $P1, $P2, $P3, $P4, $P5, $COMMENT = "") {

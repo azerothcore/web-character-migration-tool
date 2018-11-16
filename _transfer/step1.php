@@ -32,9 +32,9 @@ if(isset($_POST['Account']) && !empty($_POST['Account'])    && isset($_POST['Pas
             $DUMP               = $part[1];
             $REALM_NAME         = $_POST['RealmlistList'];
             $DECODED_DUMP       = _DECRYPT($DUMP);
-            $CHAR_REALM         = GetRealmID($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $REALM_NAME);
+            $CHAR_REALM         = GetRealmID($AccountDBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $REALM_NAME);
             $CHAR_ACCOUNT_ID    = _GetCharacterAccountID();
-            $GM_ACCOUNT_ID      = CanOrNoTransferServer($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $CHAR_REALM, $GMLevel);
+            $GM_ACCOUNT_ID      = CanOrNoTransferServer($AccountDBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $CHAR_REALM, $GMLevel);
             $json               = json_decode(stripslashes($DECODED_DUMP), true);
             $CHAR_NAME          = mb_convert_case(mb_strtolower($json['uinf']['name'], 'UTF-8'), MB_CASE_TITLE, 'UTF-8');
             $O_REALMLIST        = $json['ginf']['realmlist'];
@@ -45,7 +45,7 @@ if(isset($_POST['Account']) && !empty($_POST['Account'])    && isset($_POST['Pas
 
             $connection = mysqli_connect($AccountDBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT);
             _SelectDB($AccountDB, $connection);
-            $result = mysqli_query($connection,"SELECT `address`,`port` FROM `realmlist` WHERE `id` = ". $CHAR_REALM .";", $connection) or die(mysqli_error($connection));
+            $result = mysqli_query($connection,"SELECT `address`,`port` FROM `realmlist` WHERE `id` = ". $CHAR_REALM .";") or die(mysqli_error($connection));
             $row    = mysqli_fetch_array($result);
             $SPT    = $row['port'];
             $SIP    = $row['address'];
@@ -83,7 +83,7 @@ if(isset($_POST['Account']) && !empty($_POST['Account'])    && isset($_POST['Pas
             } else if(!_ServerOn($SIP, $SPT))
                 $realson = _RT("Realm: \"". $REALM_NAME ."\" <u>OFFLINE!</u>");
 
-            $GUID   = CheckCharacterGuid($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $CHAR_REALM, GetCharacterGuid(_HostDBSwitch($CHAR_REALM), $DBUser, $DBPassword, _CharacterDBSwitch($CHAR_REALM)));
+            $GUID   = CheckCharacterGuid($AccountDBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $CHAR_REALM, GetCharacterGuid(_HostDBSwitch($CHAR_REALM), $DB_PORT, $DBUser, $DBPassword, _CharacterDBSwitch($CHAR_REALM)));
 
             if(empty($realson)) {
                 $ID = 0;
