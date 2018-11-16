@@ -177,23 +177,25 @@ echo "
                 <td>Admin Options:          </td>
             </tr>";
 			if(!empty($query))
-            while($row = mysqli_fetch_array($query)) {
-                if($row["cStatus"] == 0)
-                    echo "
-                    <tr bgcolor = #FFFFCC>
-                        <td>". $row["cNameNEW"] ." / ". $row["cNameOLD"] ."</td>
-                        <td>". _CheckRealm($AccountDBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $row["cRealm"]) ." / ". $row["oRealm"] ."</td>
-                        <td>". $row["oRealmlist"]               ."</td>
-                        <td>". $row["oAccount"]                 ."</td>
-                        <td>". base64_decode($row["oPassword"]) ."</td>
-                        <td>". $row["oServer"]                  ."</td>
-                        <td align = center>
-                            <button name = \"Approve\" id = \"".$row["id"]."\" onclick = \"javascript:DoApprove('".$row["id"]."', '".$row["cRealm"]."', '".$row["GUID"]."');\" style = \"font-size:10px\"><font color = \"green\">". $TEXT6 ."</font></button><br>
-                            <button name = \"Deny\" id = \"".$row["id"]."\" onclick = \"javascript:DoDeny('".$row["id"]."', '".$row["cRealm"]."', '".$row["GUID"]."');\" style = \"font-size:10px\"><font color = \"red\">". $TEXT7 ."</font></button><br>
-                            <button name = \"Resend\" id = \"".$row["id"]."\" onclick = \"javascript:DoResend('".$row["id"]."', '".$row["cRealm"]."', '".$row["GUID"]."');\" style = \"font-size:10px\"><font color = \"purple\">Resend</font></button>
-                        </td>
-                    </tr>";
-            }
+            {
+				while($row = mysqli_fetch_array($query)) {
+					
+						echo "
+						<tr bgcolor = #FFFFCC>
+							<td>". $row["cNameNEW"] ." / ". $row["cNameOLD"] ."</td>
+							<td>". _CheckRealm($AccountDBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $row["cRealm"]) ." / ". $row["oRealm"] ."</td>
+							<td>". $row["oRealmlist"]               ."</td>
+							<td>". $row["oAccount"]                 ."</td>
+							<td>". base64_decode($row["oPassword"]) ."</td>
+							<td>". $row["oServer"]                  ."</td>
+							<td align = center>
+								<button name = \"Approve\" id = \"".$row["id"]."\" onclick = \"javascript:DoApprove('".$row["id"]."', '".$row["cRealm"]."', '".$row["GUID"]."');\" style = \"font-size:10px\"><font color = \"green\">". $TEXT6 ."</font></button><br>
+								<button name = \"Deny\" id = \"".$row["id"]."\" onclick = \"javascript:DoDeny('".$row["id"]."', '".$row["cRealm"]."', '".$row["GUID"]."');\" style = \"font-size:10px\"><font color = \"red\">". $TEXT7 ."</font></button><br>
+								<button name = \"Resend\" id = \"".$row["id"]."\" onclick = \"javascript:DoResend('".$row["id"]."', '".$row["cRealm"]."', '".$row["GUID"]."');\" style = \"font-size:10px\"><font color = \"purple\">Resend</font></button>
+							</td>
+						</tr>";
+				}
+			}
         } else {
             echo "
                 <td>No.:            </td>

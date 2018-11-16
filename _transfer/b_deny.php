@@ -2,7 +2,7 @@
 
     ob_start();
     session_start();
-
+sleep(5);
     include_once("t_dbfunctions.php");
     include_once("t_functions.php");
     include_once("t_config.php");
@@ -33,7 +33,7 @@
     function AddComment($AccountDBHost,$DB_PORT, $DBUser, $DBPassword, $AccountDB, $ID, $REASON){
         $connection = mysqli_connect($AccountDBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         _SelectDB($connection);
-        $query = mysqlu_query($connection,"UPDATE `account_transfer` SET `Reason` = \"". _X($connection,$REASON) ."\" WHERE `id` = ". (int)$ID .";", $connection) or die(mysqli_error($connection));
+        $query = mysqli_query($connection,"UPDATE `account_transfer` SET `Reason` = \"". _X($connection,$REASON) ."\" WHERE `id` = ". (int)$ID .";") or die(mysqli_error($connection));
         mysqli_close($connection);
     }
 ?>
