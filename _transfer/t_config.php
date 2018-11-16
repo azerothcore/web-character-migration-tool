@@ -7,11 +7,11 @@
     $captchaEnable          = 0;            // ENABLE (1) / DISABLE (0) Captcha
     $AchievementsCheck      = 0;            // ENABLE (1) / DISABLE (0) FORMULA: must have more then Level > 10 OR AchievementsMinCount param
     $AchievementsMinCount   = 50;           // Minimum ammount of Achievements.
-    $PLAYTIME               = 10;           // Minimum Playtime. Counted as: last archievment date - first archievment date
+    $PLAYTIME               = 0;           // Minimum Playtime. Counted as: last archievment date - first archievment date
 
     $AccountDB          = "auth"; // Your Account DB Name
     $AccountDBHost      = "127.0.0.1";      // Your Account DB Host
-    $DB_PORT         	= "3307";       // Your DB Port
+    $DB_PORT         	= "3306";       // Your DB Port
     $DBUser             = "root";           // Your DB User
     $DBPassword         = "root";       // Your DB Password
 

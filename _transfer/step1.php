@@ -42,7 +42,7 @@ if(isset($_POST['Account']) && !empty($_POST['Account'])    && isset($_POST['Pas
             $RaceID             = _GetRaceID(strtoupper($json['uinf']['race']));
             $ClassID            = _GetClassID(strtoupper($json['uinf']['class']));
             $CharLevel          = _MaxValue($json['uinf']['level'], $MaxCL);
-
+			//print_r($json);exit();
             $connection = mysqli_connect($AccountDBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT);
             _SelectDB($AccountDB, $connection);
             $result = mysqli_query($connection,"SELECT `address`,`port` FROM `realmlist` WHERE `id` = ". $CHAR_REALM .";") or die(mysqli_error($connection));
@@ -70,11 +70,11 @@ if(isset($_POST['Account']) && !empty($_POST['Account'])    && isset($_POST['Pas
                 $realson = _RT("Seems bad characters, not enought achievements!");
             } else if(CHECKDAY($ACHMAXTime, $ACHMINTime) < $PLAYTIME) {
                 $realson = _RT("Small playtime!");
-            } else if(_CheckBlackList($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $o_URL) ||
-                _CheckBlackList($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $O_REALM)     ||
-                _CheckBlackList($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $O_REALMLIST)) {
+            } else if(_CheckBlackList($AccountDBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $o_URL) ||
+                _CheckBlackList($AccountDBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $O_REALM)     ||
+                _CheckBlackList($AccountDBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $O_REALMLIST)) {
                 $realson = _RT($write[57]);
-            } else if(CanOrNoTransferPlayer(_HostDBSwitch($CHAR_REALM), $DBUser, $DBPassword, _CharacterDBSwitch($CHAR_REALM), $CHAR_ACCOUNT_ID)) {
+            } else if(CanOrNoTransferPlayer(_HostDBSwitch($CHAR_REALM), $DB_PORT, $DBUser, $DBPassword, _CharacterDBSwitch($CHAR_REALM), $CHAR_ACCOUNT_ID)) {
                 $realson = _RT($write[52] . $REALM_NAME . $write[53]);
             } else if($GM_ACCOUNT_ID < 0) {
                 $realson = _RT($write[54] . $REALM_NAME . $write[55]);
@@ -88,7 +88,7 @@ if(isset($_POST['Account']) && !empty($_POST['Account'])    && isset($_POST['Pas
             if(empty($realson)) {
                 $ID = 0;
                 $ID =
-                WriteDumpFromFileInDB($AccountDBHost, $DBUser, $DBPassword, $AccountDB,
+                WriteDumpFromFileInDB($AccountDBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB,
                 $DUMP, $CHAR_NAME, $CHAR_ACCOUNT_ID, $CHAR_REALM,
                                     $o_Account, $o_Password, $O_REALMLIST, $O_REALM, $o_URL, $ID, $GUID, $GM_ACCOUNT_ID, $write[20]);
             }
@@ -112,9 +112,9 @@ if(isset($_POST['Account']) && !empty($_POST['Account'])    && isset($_POST['Pas
 
             $connection         = mysqli_connect(_HostDBSwitch($CHAR_REALM), $DBUser, $DBPassword,_CharacterDBSwitch($CHAR_REALM),$DB_PORT);
             mysqli_query($connection,"
-            INSERT INTO `characters`(`guid`,`name`,`level`,`gender`,`totalHonorPoints`,`arenaPoints`,`totalKills`,`money`,`class`,`race`,`at_login`,`account`,`taximask`,`speccount`,`online`) VALUES (
-            ". $GUID .",\"". _X($connection,$CHAR_NAME) ."\",". (int)$CharLevel .",". (int)$char_gender .",". (int)$char_honorpoints .",". (int)$char_arenapoints .",
-            ". (int)$char_totalkills .",".(int)$char_money .",". $ClassID .",". $RaceID .", 0x180, 1, \"0 0 0 0 0 0 0 0 0 0 0 0 0 0\",". (int)$char_speccount .", 0);", $connection);
+            INSERT INTO `characters`(`guid`,`account`,`name`,`level`,`gender`,`totalHonorPoints`,`arenaPoints`,`totalKills`,`money`,`class`,`race`,`at_login`,`account`,`taximask`,`speccount`,`online`) VALUES (
+            ". $GUID .",'". _X($connection,$CHAR_NAME) ."',". (int)$CharLevel .",". (int)$char_gender .",". (int)$char_honorpoints .",". (int)$char_arenapoints .",
+            ". (int)$char_totalkills .",".(int)$char_money .",". $ClassID .",". $RaceID .", 0x180, 1, \"0 0 0 0 0 0 0 0 0 0 0 0 0 0\",". (int)$char_speccount .", 0);");
             $QUERYFOREXECUTE    = $QUERYFOREXECUTE. "
             INSERT INTO `character_transfer` VALUES (". $GUID .",". $CHAR_ACCOUNT_ID .",". $GM_ACCOUNT_ID .",". $ID .");
 
@@ -226,22 +226,23 @@ if(isset($_POST['Account']) && !empty($_POST['Account'])    && isset($_POST['Pas
                     $GEMrow .= $GEM3 .":1 ";
             }
             
-            $QUERYFOREXECUTE_CON    = new mysqli(_HostDBSwitch($CHAR_REALM), $DBUser, $DBPassword, _CharacterDBSwitch($CHAR_REALM));
-            mysqli_multi_query($QUERYFOREXECUTE_CON, $QUERYFOREXECUTE) or die(mysqli_error($connection));
+			
+			$QUERYFOREXECUTE_CON = mysqli_connect(_HostDBSwitch($CHAR_REALM), $DBUser, $DBPassword, _CharacterDBSwitch($CHAR_REALM), $DB_PORT);
+            mysqli_multi_query($QUERYFOREXECUTE_CON, $QUERYFOREXECUTE) or die(mysqli_error($QUERYFOREXECUTE_CON));
             
             $row = trim($INVrow . $GEMrow . $CURrow);
-            UpdateDumpITEMROW($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $ID, $row);
-            if(_CheckCharacterName(_HostDBSwitch($CHAR_REALM), $DBUser, $DBPassword, _CharacterDBSwitch($CHAR_REALM), $CHAR_NAME) > 1) {
+            UpdateDumpITEMROW($AccountDBHost,$DB_PORT, $DBUser, $DBPassword, $AccountDB, $ID, $row);
+            if(_CheckCharacterName(_HostDBSwitch($CHAR_REALM),$DB_PORT, $DBUser, $DBPassword, _CharacterDBSwitch($CHAR_REALM), $CHAR_NAME) > 1) {
                 $_SESSION['guid']       = $GUID;
                 $_SESSION['realm']      = $CHAR_REALM;
                 $_SESSION['dumpID']     = $ID;
                 $_SESSION['STEP2']      = "YES";
                 include("step2.php");
             } else {
-                UpdateDumpStatus($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $ID, 0);
+                UpdateDumpStatus($AccountDBHost,$DB_PORT, $DBUser, $DBPassword, $AccountDB, $ID, 0);
                 _PreparateMails($row, $CHAR_NAME, $TransferLetterTitle, $TransferLetterMessage, $SOAPUser, $SOAPPassword, _SOAPPSwitch($CHAR_REALM), _SOAPHSwitch($CHAR_REALM), _SOAPURISwitch($CHAR_REALM));
-                _TalentsReset(_HostDBSwitch($CHAR_REALM), $DBUser, $DBPassword, _CharacterDBSwitch($CHAR_REALM), $GUID);
-                MoveToGMAccount(_HostDBSwitch($CHAR_REALM), $DBUser, $DBPassword, _CharacterDBSwitch($CHAR_REALM), $GUID);
+                _TalentsReset(_HostDBSwitch($CHAR_REALM),$DB_PORT, $DBUser, $DBPassword, _CharacterDBSwitch($CHAR_REALM), $GUID);
+                MoveToGMAccount(_HostDBSwitch($CHAR_REALM),$DB_PORT, $DBUser, $DBPassword, _CharacterDBSwitch($CHAR_REALM), $GUID);
                 echo "<font color = \"green\">". $write[91] ."</font>";
             }
         }
