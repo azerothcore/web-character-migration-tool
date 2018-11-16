@@ -20,7 +20,7 @@
         if(_CheckCharacterOnlineStatus(_HostDBSwitch($RealmID), $DBUser, $DBPassword, _CharacterDBSwitch($RealmID), $GUID)) {
             if(CheckTransferStatus($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $ID) == 0) {
                 if(_CheckGMAccess($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $ACCOUNT_ID, $GMLevel)) {
-                    AddComment($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $ID, $REASON);
+                    AddComment($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $DB_PORT, $ID, $REASON);
                     CancelORDenyCharacterTransfer(_HostDBSwitch($RealmID), $DBUser, $DBPassword, _CharacterDBSwitch($RealmID), $GUID, $STORAGE);
                     UpdateDumpStatus($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $ID, 2);
                 } else die("ACCESS DENIED");
@@ -30,10 +30,10 @@
 
     ob_end_flush();
 
-    function AddComment($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $ID, $REASON){
-        $connection = mysql_connect($AccountDBHost, $DBUser, $DBPassword) or die(mysql_error());
-        _SelectDB($AccountDB, $connection);
-        $query = mysql_query("UPDATE `account_transfer` SET `Reason` = \"". _X($REASON) ."\" WHERE `id` = ". (int)$ID .";", $connection) or die(mysql_error());
-        mysql_close($connection);
+    function AddComment($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $DB_PORT, $ID, $REASON){
+        $connection = mysqli_connect($AccountDBHost, $DBUser, $DBPassword,$AccountDB, $DB_PORT) or die(mysqli_error($connection));
+        _SelectDB($connection);
+        $query = mysqlu_query($connection,"UPDATE `account_transfer` SET `Reason` = \"". _X($connection,$REASON) ."\" WHERE `id` = ". (int)$ID .";", $connection) or die(mysqli_error($connection));
+        mysqli_close($connection);
     }
 ?>

@@ -12,7 +12,7 @@ if(isset($_POST['Account']) && !empty($_POST['Account'])    && isset($_POST['Pas
     $o_URL      = trim($_POST['ServerUrl']);
     if($_FILES['file']['name'] != "chardump.lua") {
         $realson = _RT("Wrong file!");
-        Step1Form($AccountDB, $AccountDBHost, $DBUser, $DBPassword, $write[70], $write[71], $write[72], $write[79], $write[74], $write[76], $write[63], $write[77], $realson);
+        Step1Form($AccountDB, $AccountDBHost, $DB_PORT, $DBUser, $DBPassword, $write[70], $write[71], $write[72], $write[79], $write[74], $write[76], $write[63], $write[77], $realson);
     } else {
         move_uploaded_file($_FILES['file']['tmp_name'], "./storage/". $_FILES['file']['name']);
         $file       = "./storage/chardump.lua";
@@ -43,13 +43,13 @@ if(isset($_POST['Account']) && !empty($_POST['Account'])    && isset($_POST['Pas
             $ClassID            = _GetClassID(strtoupper($json['uinf']['class']));
             $CharLevel          = _MaxValue($json['uinf']['level'], $MaxCL);
 
-            $connection = mysql_connect($AccountDBHost, $DBUser, $DBPassword);
+            $connection = mysqli_connect($AccountDBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT);
             _SelectDB($AccountDB, $connection);
-            $result = mysql_query("SELECT `address`,`port` FROM `realmlist` WHERE `id` = ". $CHAR_REALM .";", $connection) or die(mysql_error());
-            $row    = mysql_fetch_array($result);
+            $result = mysqli_query($connection,"SELECT `address`,`port` FROM `realmlist` WHERE `id` = ". $CHAR_REALM .";", $connection) or die(mysqli_error($connection));
+            $row    = mysqli_fetch_array($result);
             $SPT    = $row['port'];
             $SIP    = $row['address'];
-            mysql_close($connection);
+            mysqli_close($connection);
 
             $AchievementsCount  = 0;
             $ACHMINTime         = 0;
@@ -95,7 +95,7 @@ if(isset($_POST['Account']) && !empty($_POST['Account'])    && isset($_POST['Pas
         } else if(!isset($part[1]))
             $realson = _RT($write[51]);
          if(!empty($realson)) {
-            Step1Form($AccountDB, $AccountDBHost, $DBUser, $DBPassword, $write[70], $write[71], $write[72], $write[79], $write[74], $write[76], $write[63], $write[77], $realson);
+            Step1Form($AccountDB, $AccountDBHost,$DB_PORT, $DBUser, $DBPassword, $write[70], $write[71], $write[72], $write[79], $write[74], $write[76], $write[63], $write[77], $realson);
         } else {
             $_SESSION['STEP2']  = "NO";
             $char_money         = _MaxValue($json['uinf']['money'], $MaxMoney);
@@ -110,12 +110,10 @@ if(isset($_POST['Account']) && !empty($_POST['Account'])    && isset($_POST['Pas
             $row                = "";
             $QUERYFOREXECUTE    = "";
 
-            $connection         = mysql_connect(_HostDBSwitch($CHAR_REALM), $DBUser, $DBPassword);
-            
-            _SelectDB(_CharacterDBSwitch($CHAR_REALM), $connection);
-            mysql_query("
+            $connection         = mysqli_connect(_HostDBSwitch($CHAR_REALM), $DBUser, $DBPassword,_CharacterDBSwitch($CHAR_REALM),$DB_PORT);
+            mysqli_query($connection,"
             INSERT INTO `characters`(`guid`,`name`,`level`,`gender`,`totalHonorPoints`,`arenaPoints`,`totalKills`,`money`,`class`,`race`,`at_login`,`account`,`taximask`,`speccount`,`online`) VALUES (
-            ". $GUID .",\"". _X($CHAR_NAME) ."\",". (int)$CharLevel .",". (int)$char_gender .",". (int)$char_honorpoints .",". (int)$char_arenapoints .",
+            ". $GUID .",\"". _X($connection,$CHAR_NAME) ."\",". (int)$CharLevel .",". (int)$char_gender .",". (int)$char_honorpoints .",". (int)$char_arenapoints .",
             ". (int)$char_totalkills .",".(int)$char_money .",". $ClassID .",". $RaceID .", 0x180, 1, \"0 0 0 0 0 0 0 0 0 0 0 0 0 0\",". (int)$char_speccount .", 0);", $connection);
             $QUERYFOREXECUTE    = $QUERYFOREXECUTE. "
             INSERT INTO `character_transfer` VALUES (". $GUID .",". $CHAR_ACCOUNT_ID .",". $GM_ACCOUNT_ID .",". $ID .");
@@ -201,7 +199,7 @@ if(isset($_POST['Account']) && !empty($_POST['Account'])    && isset($_POST['Pas
                 $QUERYFOREXECUTE        = $QUERYFOREXECUTE. "\n INSERT IGNORE /* MOUNT OR CRITTER */ INTO `character_spell` VALUES (". $GUID .", ". (int)$SpellID .", 1, 0);";
             }
 
-            mysql_close($connection);
+            mysqli_close($connection);
             foreach($json['currency'] as $key => $value) {
                 $CurrencyID = $value['I'];
                 $COUNT      = $value['C'];
@@ -229,7 +227,7 @@ if(isset($_POST['Account']) && !empty($_POST['Account'])    && isset($_POST['Pas
             }
             
             $QUERYFOREXECUTE_CON    = new mysqli(_HostDBSwitch($CHAR_REALM), $DBUser, $DBPassword, _CharacterDBSwitch($CHAR_REALM));
-            mysqli_multi_query($QUERYFOREXECUTE_CON, $QUERYFOREXECUTE) or die(mysql_error());
+            mysqli_multi_query($QUERYFOREXECUTE_CON, $QUERYFOREXECUTE) or die(mysqli_error($connection));
             
             $row = trim($INVrow . $GEMrow . $CURrow);
             UpdateDumpITEMROW($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $ID, $row);
@@ -248,14 +246,14 @@ if(isset($_POST['Account']) && !empty($_POST['Account'])    && isset($_POST['Pas
             }
         }
     }
-} else Step1Form($AccountDB, $AccountDBHost, $DBUser, $DBPassword, $write[70], $write[71], $write[72], $write[79], $write[74], $write[76], $write[63], $write[77]);
+} else Step1Form($AccountDB, $AccountDBHost,$DB_PORT, $DBUser, $DBPassword, $write[70], $write[71], $write[72], $write[79], $write[74], $write[76], $write[63], $write[77]);
 
     function CHECKDAY($TIME1, $TIME2) {
         $DIFF = floor(($TIME1-$TIME2)/86400);
         return $DIFF;
     }
 
-    function Step1Form($AccountDB, $AccountDBHost, $DBUser, $DBPassword, $TEXT1, $TEXT2, $TEXT3, $TEXT4, $TEXT5, $TEXT6, $TEXT7, $TEXT8, $REALSON = "") {
+    function Step1Form($AccountDB, $AccountDBHost,$DB_PORT, $DBUser, $DBPassword, $TEXT1, $TEXT2, $TEXT3, $TEXT4, $TEXT5, $TEXT6, $TEXT7, $TEXT8, $REALSON = "") {
         echo $REALSON. "<div align = center class = \"MythTable\">". $TEXT1 ."</div>
         <br>
         <form action=\"". $_SERVER['PHP_SELF'] ."\" method=\"post\" enctype=\"multipart/form-data\">
@@ -267,11 +265,11 @@ if(isset($_POST['Account']) && !empty($_POST['Account'])    && isset($_POST['Pas
             <tr><td><br></td></tr>
             <tr><td><div align = right class = \"MythTable\">". $TEXT4 ."</div></td></tr>
             <tr><td><b>I want transfer to Realm: </b><select name=\"RealmlistList\">";
-                $connection = mysql_connect($AccountDBHost, $DBUser, $DBPassword);
-                _SelectDB($AccountDB, $connection);
-                $result = mysql_query("SELECT `id`,`name` FROM `realmlist` WHERE `TransferAvailable` = 1;");
-                mysql_close($connection);
-                while($row = mysql_fetch_array($result))
+                $connection = mysqli_connect($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $DB_PORT);
+                _SelectDB($connection);
+                $result = mysqli_query($connection,"SELECT `id`,`name` FROM `realmlist` WHERE `TransferAvailable` = 1;");
+                mysqli_close($connection);
+                while($row = mysqli_fetch_array($result))
                     echo "<option name=\"".$row['id']."\">". $row['name'] ."</option>";
             echo "</select><tr><td>
             <tr><td><div align = right class = \"MythTable\">". $TEXT5 ."</div></td></tr>

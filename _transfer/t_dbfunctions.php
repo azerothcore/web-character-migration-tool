@@ -3,44 +3,44 @@
     include_once('t_config.php');
     include_once('language.php');
 
-    function _X($A) {
-        return get_magic_quotes_gpc() ? stripslashes(mysql_real_escape_string($A)) : mysql_real_escape_string($A);
+    function _X($C,$A) {
+        return get_magic_quotes_gpc() ? stripslashes(mysqli_real_escape_string($C,$A)) : mysqli_real_escape_string($C,$A);
     }
 
     function _CheckCharacterOnlineStatus($DBHost, $DB_PORT, $DBUser, $DBPassword, $CharactersDB, $GUID) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         _SelectDB($connection);
-        $query  = mysqli_query($connection,"SELECT `online` FROM `characters` WHERE `guid` = ". $GUID .";") or die(mysql_error());
+        $query  = mysqli_query($connection,"SELECT `online` FROM `characters` WHERE `guid` = ". $GUID .";") or die(mysqli_error($connection));
         $result = mysqli_fetch_array($query);
         mysqli_close($connection);
         return $result[0] == 0 ? true : false;
     }
 
     function CheckTransferStatus($DBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $ID) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         
-        $query = mysqli_query($connection,"SELECT `cStatus` FROM `account_transfer` WHERE `id` = ". (int)$ID .";") or die(mysql_error());
+        $query = mysqli_query($connection,"SELECT `cStatus` FROM `account_transfer` WHERE `id` = ". (int)$ID .";") or die(mysqli_error($connection));
         $row = mysqli_fetch_array($query);
         mysqli_close($connection);
         return $row['cStatus'];
     }
 
     function CanOrNoTransferPlayer($DBHost, $DB_PORT, $DBUser, $DBPassword, $CharactersDB, $AccountID) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         _SelectDB($connection);
-        $query  = mysqli_query($connection,"SELECT COUNT(*) FROM `characters` WHERE `account` = ". $AccountID .";") or die(mysql_error());
+        $query  = mysqli_query($connection,"SELECT COUNT(*) FROM `characters` WHERE `account` = ". $AccountID .";") or die(mysqli_error($connection));
         $result = mysqli_fetch_array($query);
         mysqli_close($connection);
         return $result[0] < 9 ? false : true;
     }
 
     function CanOrNoTransferServer($DBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $RealmID, $GMLevel) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         
         //echo "<br> DELETE FROM `account_transfer_queue`;";
-        $query = mysqli_query($connection,"DELETE FROM `account_transfer_queue`;") or die(mysql_error());
+        $query = mysqli_query($connection,"DELETE FROM `account_transfer_queue`;") or die(mysqli_error($connection));
         //echo "<br> INSERT IGNORE INTO `account_transfer_queue`(`id`) SELECT `id` FROM `account_access`;";
-        $query = mysqli_query($connection,"INSERT IGNORE INTO `account_transfer_queue`(`id`) SELECT `id` FROM `account_access` WHERE `gmlevel` IN ". $GMLevel .";") or die(mysql_error());
+        $query = mysqli_query($connection,"INSERT IGNORE INTO `account_transfer_queue`(`id`) SELECT `id` FROM `account_access` WHERE `gmlevel` IN ". $GMLevel .";") or die(mysqli_error($connection));
         //echo "<br> SELECT `id` FROM `account_transfer_queue`";
         $query = mysqli_query($connection,"SELECT `id` FROM `account_transfer_queue`");
         mysqli_close($connection);
@@ -49,7 +49,7 @@
             //echo "<br> < 1st WHILE CYCLE > Reviewer ID: ". $ACCOUNT_ID;
             UPDATEReviewer($DBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $ACCOUNT_ID);
         }
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         
         $REVIEWER_ID    = -1;
         $MIN            = 8;
@@ -73,9 +73,9 @@
     }
 
     function _CheckBlackList($DBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $VALUE) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         
-        $query = mysqli_query($connection,"SELECT `b_address` FROM `account_transfer_blacklist` WHERE `b_address` LIKE \"%". _X(trim($VALUE)) ."%\";") or die(mysql_error());
+        $query = mysqli_query($connection,"SELECT `b_address` FROM `account_transfer_blacklist` WHERE `b_address` LIKE \"%". _X($connection,trim($VALUE)) ."%\";") or die(mysqli_error($connection));
         $row = mysqli_fetch_array($query);
         mysqli_close($connection);
         return $row ? true : false;
@@ -87,7 +87,7 @@
         $Realm3     = CountQueue(_HostDBSwitch(3), $DBUser, $DBPassword, _CharacterDBSwitch(3), $ACCOUNT_ID);
         $Realm4     = CountQueue(_HostDBSwitch(4), $DBUser, $DBPassword, _CharacterDBSwitch(4), $ACCOUNT_ID);
         $Realm5     = CountQueue(_HostDBSwitch(5), $DBUser, $DBPassword, _CharacterDBSwitch(5), $ACCOUNT_ID);
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         
         $query = mysqli_query($connection,"UPDATE `account_transfer_queue` SET
         `Realm1`    = ". $Realm1 .",
@@ -95,7 +95,7 @@
         `Realm3`    = ". $Realm3 .",
         `Realm4`    = ". $Realm4 .",
         `Realm5`    = ". $Realm5 ."
-        WHERE `id` = ". $ACCOUNT_ID.";") or die(mysql_error());
+        WHERE `id` = ". $ACCOUNT_ID.";") or die(mysqli_error($connection));
         mysqli_close($connection);
     }
 
@@ -103,9 +103,9 @@
         if($CharacterDB < 0 || $DBHost < 0)
             return 0;
         else {
-            $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+            $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
             _SelectDB($CharacterDB);
-            $query = mysqli_query($connection,"SELECT COUNT(*) FROM `characters` WHERE `account` = ". $ACCOUNT_ID .";") or die(mysql_error());
+            $query = mysqli_query($connection,"SELECT COUNT(*) FROM `characters` WHERE `account` = ". $ACCOUNT_ID .";") or die(mysqli_error($connection));
             $result = mysqli_fetch_array($query);
             mysqli_close($connection);
             //echo " Characters Count: ". $result[0];
@@ -114,34 +114,34 @@
     }
 
     function GetRealmID($DBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $Realm) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         
-        $query = mysqli_query($connection,"SELECT `id` FROM `realmlist` WHERE `name` = \"". _X($Realm) ."\";") or die(mysql_error());
+        $query = mysqli_query($connection,"SELECT `id` FROM `realmlist` WHERE `name` = \"". _X($connection,$Realm) ."\";") or die(mysqli_error($connection));
         $row = mysqli_fetch_array($query);
         mysqli_close($connection);
         return $row['id'];
     }
 
     function GetCharacterGuid($DBHost, $DB_PORT, $DBUser, $DBPassword, $CharactersDB) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         _SelectDB($connection);
-        $query = mysqli_query($connection,"SELECT MAX(`guid`) FROM `characters` WHERE `guid` BETWEEN 1000000 AND 1999999;") or die(mysql_error());
+        $query = mysqli_query($connection,"SELECT MAX(`guid`) FROM `characters` WHERE `guid` BETWEEN 1000000 AND 1999999;") or die(mysqli_error($connection));
         $row = mysqli_fetch_array($query);
         mysqli_close($connection);
         return $row[0];
     }
 
     function UpdateCharacterGuid($DBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $RealmID, $GUID) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         
-        $query = mysqli_query($connection,"UPDATE `account_transfer_guid` SET `Realm". $RealmID ."` = ". $GUID .";") or die(mysql_error());
+        $query = mysqli_query($connection,"UPDATE `account_transfer_guid` SET `Realm". $RealmID ."` = ". $GUID .";") or die(mysqli_error($connection));
         mysqli_close($connection);
     }
 
     function CheckCharacterGuid($DBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $RealmID, $GUID) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         
-        $query = mysqli_query($connection,"SELECT MAX(`Realm". $RealmID ."`) FROM `account_transfer_guid`;") or die(mysql_error());
+        $query = mysqli_query($connection,"SELECT MAX(`Realm". $RealmID ."`) FROM `account_transfer_guid`;") or die(mysqli_error($connection));
         $row = mysqli_fetch_array($query);
         mysqli_close($connection);
         if($row[0] > $GUID)
@@ -153,23 +153,23 @@
     }
 
     function CancelORDenyCharacterTransfer($DBHost, $DB_PORT, $DBUser, $DBPassword, $CharactersDB, $GUID, $STORAGE) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         _SelectDB($connection);
-        mysqli_query($connection,"UPDATE `characters` SET `name` = (SELECT `dump_id` FROM `character_transfer` WHERE `guid` = ". $GUID ."),`account` = ". $STORAGE ." WHERE `guid` = ". $GUID .";") or die(mysql_error());
+        mysqli_query($connection,"UPDATE `characters` SET `name` = (SELECT `dump_id` FROM `character_transfer` WHERE `guid` = ". $GUID ."),`account` = ". $STORAGE ." WHERE `guid` = ". $GUID .";") or die(mysqli_error($connection));
         mysqli_close($connection);
     }
 
     function ApproveCharacterTransfer($DBHost, $DB_PORT, $DBUser, $DBPassword, $CharactersDB, $GUID) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         _SelectDB($connection);
-        mysqli_query($connection,"UPDATE `characters` SET `account` = (SELECT `player_account` FROM `character_transfer` WHERE guid = ". $GUID .") WHERE `guid` = ". $GUID .";") or die(mysql_error());
+        mysqli_query($connection,"UPDATE `characters` SET `account` = (SELECT `player_account` FROM `character_transfer` WHERE guid = ". $GUID .") WHERE `guid` = ". $GUID .";") or die(mysqli_error($connection));
         mysqli_close($connection);
     }
 
     function MoveToGMAccount($DBHost, $DB_PORT, $DBUser, $DBPassword, $CharactersDB, $GUID) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         _SelectDB($connection);
-        mysqli_query($connection,"UPDATE `characters` SET `account` = (SELECT `gm_account` FROM `character_transfer` WHERE `guid` = ". $GUID .") WHERE `guid` = ". $GUID .";") or die(mysql_error());
+        mysqli_query($connection,"UPDATE `characters` SET `account` = (SELECT `gm_account` FROM `character_transfer` WHERE `guid` = ". $GUID .") WHERE `guid` = ". $GUID .";") or die(mysqli_error($connection));
         mysqli_close($connection);
     }
 
@@ -195,44 +195,44 @@
     }
 
     function _CheckRealm($DBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $RealmID) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
 
-        $query = mysqli_query($connection,"SELECT `name` FROM `realmlist` WHERE `id` = ". $RealmID .";") or die(mysql_error());
+        $query = mysqli_query($connection,"SELECT `name` FROM `realmlist` WHERE `id` = ". $RealmID .";") or die(mysqli_error($connection));
         $row = mysqli_fetch_array($query);
         mysqli_close($connection);
         return $row[0];
     }
 
     function _CheckGMAccess($DBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $ID, $GMLevel) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
-        $query = mysqli_query($connection,"SELECT * FROM `account_access` WHERE `id` = ". $ID ." AND `gmlevel` IN ". $GMLevel .";") or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
+        $query = mysqli_query($connection,"SELECT * FROM `account_access` WHERE `id` = ". $ID ." AND `gmlevel` IN ". $GMLevel .";") or die(mysqli_error($connection));
         $row = mysqli_fetch_array($query);
         mysqli_close($connection);
         return $row ? true : false;
     }
 
     function _CheckCharacterName($DBHost, $DB_PORT, $DBUser, $DBPassword, $CharactersDB, $NAME) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         _SelectDB($connection);
-        $query = mysqli_query($connection,"SELECT COUNT(*) AS `AMOUNT` FROM `characters` WHERE `name` = \"". _X($NAME) ."\";") or die(mysql_error());
+        $query = mysqli_query($connection,"SELECT COUNT(*) AS `AMOUNT` FROM `characters` WHERE `name` = \"". _X($connection,$NAME) ."\";") or die(mysqli_error($connection));
         $row = mysqli_fetch_array($query);
         mysqli_close($connection);
         return $row["AMOUNT"];
     }
 
     function _GetCharacterName($DBHost, $DB_PORT, $DBUser, $DBPassword, $CharactersDB, $GUID) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         _SelectDB($connection);
-        $query = mysqli_query($connection,"SELECT `name` FROM `characters` WHERE `guid` = ". (int)$GUID .";") or die(mysql_error());
+        $query = mysqli_query($connection,"SELECT `name` FROM `characters` WHERE `guid` = ". (int)$GUID .";") or die(mysqli_error($connection));
         $row = mysqli_fetch_array($query);
         mysqli_close($connection);
         return $row["name"];
     }
 
     function UpdateCharacterName($DBHost, $DB_PORT, $DBUser, $DBPassword, $CharactersDB, $Name, $GUID) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         _SelectDB($connection);
-        mysqli_query($connection,"UPDATE `characters` SET `name` = \"". _X($Name) ."\" WHERE `guid` = ". $GUID .";") or die(mysql_error());
+        mysqli_query($connection,"UPDATE `characters` SET `name` = \"". _X($connection,$Name) ."\" WHERE `guid` = ". $GUID .";") or die(mysqli_error($connection));
         mysqli_close($connection);
         return $Name;
     }
@@ -240,43 +240,43 @@
     function LearnSeparateSpell($SpellID, $GUID) {
         if($SpellID < 1)
             return;
-        mysqli_query($connection,"/* function GetExtraSpellForSkill */ INSERT IGNORE INTO `character_spell` VALUES (". $GUID .", ". (int)$SpellID .", 1, 0 );") or die(mysql_error());
+        mysqli_query($connection,"/* function GetExtraSpellForSkill */ INSERT IGNORE INTO `character_spell` VALUES (". $GUID .", ". (int)$SpellID .", 1, 0 );") or die(mysqli_error($connection));
     }
 
     function UpdateDumpStatus($DBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $ID, $STATUS) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         
-        mysqli_query($connection,"UPDATE `account_transfer` SET `cStatus` = ".(int)$STATUS ." WHERE `id` = ". (int)$ID .";") or die(mysql_error());
+        mysqli_query($connection,"UPDATE `account_transfer` SET `cStatus` = ".(int)$STATUS ." WHERE `id` = ". (int)$ID .";") or die(mysqli_error($connection));
         mysqli_close($connection);
     }
 
     function UpdateDumpSTATUSandNAME($DBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $ID, $NAME, $STATUS) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         
-        mysqli_query($connection,"UPDATE `account_transfer` SET `cNameNew` = \"". _X($NAME) ."\", `cStatus` = ". (int)$STATUS ." WHERE `id` = ". (int)$ID .";") or die(mysql_error());
+        mysqli_query($connection,"UPDATE `account_transfer` SET `cNameNew` = \"". _X($connection,$NAME) ."\", `cStatus` = ". (int)$STATUS ." WHERE `id` = ". (int)$ID .";") or die(mysqli_error($connection));
         mysqli_close($connection);
     }
 
     function UpdateDumpITEMROW($DBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $ID, $ROW) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         
-        mysqli_query($connection,"UPDATE `account_transfer` SET `cItemRow` = \"". _X($ROW) ."\" WHERE `id` = ". (int)$ID .";") or die(mysql_error());
+        mysqli_query($connection,"UPDATE `account_transfer` SET `cItemRow` = \"". _X($connection,$ROW) ."\" WHERE `id` = ". (int)$ID .";") or die(mysqli_error($connection));
         mysqli_close($connection);
     }
 
     function LoadItemRoW($DBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $ID) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         
-        $query = mysqli_query($connection,"SELECT `cItemRow` FROM `account_transfer` WHERE `id` = \"". (int)$ID ."\";") or die(mysql_error());
+        $query = mysqli_query($connection,"SELECT `cItemRow` FROM `account_transfer` WHERE `id` = \"". (int)$ID ."\";") or die(mysqli_error($connection));
         $row = mysqli_fetch_array($query);
         mysqli_close($connection);
         return $row[0];
     }
 
     function LoadDump($DBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $ID) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         
-        $query = mysqli_query($connection,"SELECT `cDump` FROM `account_transfer` WHERE `id` = \"". (int)$ID ."\";") or die(mysql_error());
+        $query = mysqli_query($connection,"SELECT `cDump` FROM `account_transfer` WHERE `id` = \"". (int)$ID ."\";") or die(mysqli_error($connection));
         $row = mysqli_fetch_array($query);
         mysqli_close($connection);
         return $row[0];
@@ -284,13 +284,13 @@
 
     function WriteDumpFromFileInDB($DBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $DUMP, $CHAR_NAME, $CHAR_ACCOUNT_ID, $CHAR_REALM,
                                     $o_Account, $o_Password, $O_REALMLIST, $O_REALM, $o_URL, $ID, $GUID, $GM_ACCOUNT, $ERROR) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         
         $query = mysqli_query($connection,"INSERT INTO `account_transfer`(
         `cStatus`,`cRealm`,`oAccount`,`oPassword`,`oRealmlist`,`oRealm`,`oServer`,`cDump`,`cNameOLD`,`cNameNEW`,`cAccount`,`GUID`,`gmAccount`) VALUES (
-        5,\"". _X($CHAR_REALM) ."\",\"". _X($o_Account) ."\",\"". _X($o_Password) ."\",\"". _X($O_REALMLIST) ."\",\"". _X($O_REALM) ."\",\"". _X($o_URL) ."\"
-        ,\"". _X($DUMP) ."\",\"". _X($CHAR_NAME) ."\",\"". _X($CHAR_NAME) ."\",". $CHAR_ACCOUNT_ID .",". $GUID .",". $GM_ACCOUNT .");") or die(mysql_error());
-        $ID         = mysql_insert_id($connection);
+        5,\"". _X($connection,$CHAR_REALM) ."\",\"". _X($connection,$o_Account) ."\",\"". _X($connection,$o_Password) ."\",\"". _X($connection,$O_REALMLIST) ."\",\"". _X($connection,$O_REALM) ."\",\"". _X($connection,$o_URL) ."\"
+        ,\"". _X($connection,$DUMP) ."\",\"". _X($connection,$CHAR_NAME) ."\",\"". _X($connection,$CHAR_NAME) ."\",". $CHAR_ACCOUNT_ID .",". $GUID .",". $GM_ACCOUNT .");") or die(mysqli_error($connection));
+        $ID         = mysqli_insert_id($connection);
         mysqli_close($connection);
         return $ID;
     }
@@ -371,9 +371,9 @@
     }
 
     function _TalentsReset($DBHost, $DB_PORT, $DBUser, $DBPassword, $CharactersDB, $GUID) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysql_error());
+        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         _SelectDB($connection);
-        $query = mysqli_query($connection,"UPDATE `characters` SET `at_login` = `at_login`|4|16 WHERE `guid` = ". $GUID .";") or die(mysql_error());
+        $query = mysqli_query($connection,"UPDATE `characters` SET `at_login` = `at_login`|4|16 WHERE `guid` = ". $GUID .";") or die(mysqli_error($connection));
         mysqli_close($connection);
     }
 

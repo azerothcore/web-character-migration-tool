@@ -12,18 +12,18 @@
         $ID         = $_SESSION['dumpID'];
         $realson    = "";
 
-        $connection = mysql_connect($AccountDBHost, $DBUser, $DBPassword);
-        _SelectDB($AccountDB, $connection);
-        $result = mysql_query("SELECT `name`,`address`,`port` FROM `realmlist` WHERE `id` = ". $RealmID .";", $connection) or die(mysql_error());
-        $row    = mysql_fetch_array($result);
+        $connection = mysqli_connect($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $DB_PORT);
+        _SelectDB($connection);
+        $result = mysqli_query($connection,"SELECT `name`,`address`,`port` FROM `realmlist` WHERE `id` = ". $RealmID .";", $connection) or die(mysqli_error($connection));
+        $row    = mysqli_fetch_array($result);
         $SPT    = $row["port"];
         $SNA    = $row["name"];
         $SIP    = $row["address"];
-        mysql_close($connection);
+        mysqli_close($connection);
 
         if(!isset($_SESSION['guid']) || !isset ($_SESSION['realm']) || !isset($_SESSION['dumpID']) || $_SESSION['STEP2'] != "YES") {
             $realson    = $write[98];
-        } else if(preg_match('/[\'^?$%&*()}{@#~?><>,|=_+¬-]./', $CHAR_NAME)) {
+        } else if(preg_match('/[\'^?$%&*()}{@#~?><>,|=_+ï¿½-]./', $CHAR_NAME)) {
             $realson    = $write[92];
         } else if(strstr( $CHAR_NAME, " ")) {
             $realson    = $write[93];
