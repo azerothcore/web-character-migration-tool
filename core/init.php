@@ -10,7 +10,7 @@ session_start();
 $GLOBALS['config'] = array(
 	'mysql'    => array(
 		'host' 	   => '127.0.0.1',
-		'port' 	   => '3307',
+		'port' 	   => '3306',
 		'username' => 'root',
 		'password' => 'root',
 		'db' 	   => 'auth'

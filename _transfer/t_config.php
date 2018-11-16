@@ -11,7 +11,7 @@
 
     $AccountDB          = "auth"; // Your Account DB Name
     $AccountDBHost      = "127.0.0.1";      // Your Account DB Host
-    $DB_PORT         	= "3307";       // Your DB Port
+    $DB_PORT         	= "3306";       // Your DB Port
     $DBUser             = "root";           // Your DB User
     $DBPassword         = "root";       // Your DB Password
 
