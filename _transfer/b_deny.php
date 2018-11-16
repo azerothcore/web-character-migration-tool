@@ -17,12 +17,12 @@
         if(!isset($REASON) || empty($REASON))
             $REASON = "Not meet requeriments.";
 
-        if(_CheckCharacterOnlineStatus(_HostDBSwitch($RealmID), $DBUser, $DBPassword, _CharacterDBSwitch($RealmID), $GUID)) {
-            if(CheckTransferStatus($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $ID) == 0) {
-                if(_CheckGMAccess($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $ACCOUNT_ID, $GMLevel)) {
-                    AddComment($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $DB_PORT, $ID, $REASON);
-                    CancelORDenyCharacterTransfer(_HostDBSwitch($RealmID), $DBUser, $DBPassword, _CharacterDBSwitch($RealmID), $GUID, $STORAGE);
-                    UpdateDumpStatus($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $ID, 2);
+        if(_CheckCharacterOnlineStatus(_HostDBSwitch($RealmID),$DB_PORT, $DBUser, $DBPassword, _CharacterDBSwitch($RealmID), $GUID)) {
+            if(CheckTransferStatus($AccountDBHost,$DB_PORT, $DBUser, $DBPassword, $AccountDB, $ID) == 0) {
+                if(_CheckGMAccess($AccountDBHost,$DB_PORT, $DBUser, $DBPassword, $AccountDB, $ACCOUNT_ID, $GMLevel)) {
+                    AddComment($AccountDBHost,$DB_PORT, $DBUser, $DBPassword, $AccountDB, $ID, $REASON);
+                    CancelORDenyCharacterTransfer(_HostDBSwitch($RealmID),$DB_PORT, $DBUser, $DBPassword, _CharacterDBSwitch($RealmID), $GUID, $STORAGE);
+                    UpdateDumpStatus($AccountDBHost,$DB_PORT, $DBUser, $DBPassword, $AccountDB, $ID, 2);
                 } else die("ACCESS DENIED");
             } else die("NOT \"IN PROGRESS\" STATUS");
         } else die("LOG OFF WITH THIS CHARACTER! BEFORE MAKE ANY ACTIONS!");
@@ -30,8 +30,8 @@
 
     ob_end_flush();
 
-    function AddComment($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $DB_PORT, $ID, $REASON){
-        $connection = mysqli_connect($AccountDBHost, $DBUser, $DBPassword,$AccountDB, $DB_PORT) or die(mysqli_error($connection));
+    function AddComment($AccountDBHost,$DB_PORT, $DBUser, $DBPassword, $AccountDB, $ID, $REASON){
+        $connection = mysqli_connect($AccountDBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
         _SelectDB($connection);
         $query = mysqlu_query($connection,"UPDATE `account_transfer` SET `Reason` = \"". _X($connection,$REASON) ."\" WHERE `id` = ". (int)$ID .";", $connection) or die(mysqli_error($connection));
         mysqli_close($connection);
