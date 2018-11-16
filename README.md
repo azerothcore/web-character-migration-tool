@@ -11,14 +11,10 @@ Translated to Spanish, English, French, German and Russian.
 Requeriments
 ========
 
-PHP 5.3.X and MySQL 5.1.X
+PHP >= 5.3.X and MySQL >= 5.1.X
 
 PHP: enable SOAP module
 
 World Server: enable SOAP module
-
-
-
-More information and other items: ZoneWoW.com
 
 Desch
