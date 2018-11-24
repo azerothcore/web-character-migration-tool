@@ -239,7 +239,7 @@
         return $Name;
     }
 
-    function LearnSeparateSpell($SpellID, $GUID) {
+    function LearnSeparateSpell($SpellID, $GUID,$connection) {
         if($SpellID < 1)
             return;
         mysqli_query($connection,"/* function GetExtraSpellForSkill */ INSERT IGNORE INTO `character_spell` VALUES (". $GUID .", ". (int)$SpellID .", 1, 0 );") or die(mysqli_error($connection));
@@ -393,11 +393,11 @@
                     case 225:   $SpellID = 34090;   break;
                     case 300:   $SpellID = 34091;
                         if($LEVEL == 80)
-                            LearnSeparateSpell(54197, $GUID);
+                            LearnSeparateSpell(54197, $GUID,$connection);
                         break;
                     default: return false;
                 }
-                LearnSeparateSpell($SpellID, $GUID);
+                LearnSeparateSpell($SpellID, $GUID,$connection);
                 return true;
             default: return false;
        }
