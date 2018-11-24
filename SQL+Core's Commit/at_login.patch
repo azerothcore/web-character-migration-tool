@@ -18,7 +18,7 @@ index 284a8eb..20c363d 100644
 +        {
 +            nameUpdate_AT_LOGIN_UPDATE_NAME = (*result)[0].GetString();
 +            accID_Update_AT_LOGIN_UPDATE_NAME = (*result)[1].GetUInt32();
-+			sWorld->AddGlobalPlayerData(pCurrChar->GetGUIDLow(), PLAYER_UPDATE_DATA_NAME, nameUpdate_AT_LOGIN_UPDATE_NAME, pCurrChar->getLevel(), pCurrChar->getGender(),pCurrChar->getRace(), pCurrChar->getClass());
++			sWorld->UpdateGlobalPlayerData(pCurrChar->GetGUIDLow(), PLAYER_UPDATE_DATA_NAME, nameUpdate_AT_LOGIN_UPDATE_NAME, pCurrChar->getLevel(), pCurrChar->getGender(),pCurrChar->getRace(), pCurrChar->getClass());
 +			sWorld->AddGlobalPlayerData(pCurrChar->GetGUIDLow(), accID_Update_AT_LOGIN_UPDATE_NAME, nameUpdate_AT_LOGIN_UPDATE_NAME, pCurrChar->getGender(), pCurrChar->getRace(), pCurrChar->getClass(), pCurrChar->getLevel(), 0, 0);
 +        }
 +        pCurrChar->RemoveAtLoginFlag(AT_LOGIN_RENAME);
