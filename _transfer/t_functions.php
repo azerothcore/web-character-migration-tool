@@ -35,23 +35,9 @@
 
     function _PreparateMails($row, $PlayerName, $TransferLetterTitle, $TransferLetterMessage, $SOAPUser, $SOAPPassword, $SOAPPort, $SOAPHost, $URI) {
         $item_array = explode(" ", trim($row));
-        $by10       = 1;
-        $toSend     = "";
-        $needSend   = count($item_array);
         for($i = 0; $i < count($item_array); $i++) {
-            $toSend .= $item_array[$i];
-            $toSend .= " ";
-            if($by10 == 10) {
-                RemoteCommandWithSOAP($SOAPUser, $SOAPPassword, $SOAPPort, $SOAPHost, $URI,
-                trim("send items ". $PlayerName ." \"". $TransferLetterTitle ."\" \"". $TransferLetterMessage ."\" ". $toSend));
-                $needSend = $needSend - $by10;
-                $by10    = 1;
-                $toSend = "";
-            } else if($needSend - $by10 == 0) {
-                RemoteCommandWithSOAP($SOAPUser, $SOAPPassword, $SOAPPort, $SOAPHost, $URI,
-                trim("send items ". $PlayerName ." \"". $TransferLetterTitle ."\" \"". $TransferLetterMessage ."\" ". $toSend));
-                $toSend = "";
-            } else $by10++;
+			RemoteCommandWithSOAP($SOAPUser, $SOAPPassword, $SOAPPort, $SOAPHost, $URI,
+			trim("send items ". $PlayerName ." \"". $TransferLetterTitle ."\" \"". $TransferLetterMessage ."\" ". $item_array[$i]));
         }
     }
 
