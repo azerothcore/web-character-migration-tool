@@ -89,7 +89,7 @@ if(isset($_POST['Account']) && !empty($_POST['Account'])    && isset($_POST['Pas
             } else if(!_ServerOn($SIP, $SPT))
                 $realson = _RT("Realm: \"". $REALM_NAME ."\" <u>OFFLINE!</u>");
 
-            $GUID   = CheckCharacterGuid($AccountDBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $CHAR_REALM, GetCharacterGuid(_HostDBSwitch($CHAR_REALM), $DB_PORT, $DBUser, $DBPassword, _CharacterDBSwitch($CHAR_REALM)));
+            $GUID   = GetCharacterGuid(_HostDBSwitch($CHAR_REALM), $DB_PORT, $DBUser, $DBPassword, _CharacterDBSwitch($CHAR_REALM));
 
             if(empty($realson)) {
                 $ID = 0;
@@ -106,7 +106,7 @@ if(isset($_POST['Account']) && !empty($_POST['Account'])    && isset($_POST['Pas
             $_SESSION['STEP2']  = "NO";
             $char_money         = _MaxValue($json['uinf']['money'], $MaxMoney);
             $char_speccount     = $json['uinf']['specs'];
-            $char_gender        = $json['uinf']['gender'] - 2 == 1 ? 1 : 0;
+			$char_gender        = $json['uinf']['gender'] - 2 == 1 ? 1 : 0;
             $char_totalkills    = $json['uinf']['kills'];
             $char_arenapoints   = _MaxValue($json['uinf']['arenapoints'], $MaxAP);
             $char_honorpoints   = _MaxValue($json['uinf']['honor'], $MaxHP);
@@ -118,9 +118,9 @@ if(isset($_POST['Account']) && !empty($_POST['Account'])    && isset($_POST['Pas
 
             $connection         = mysqli_connect(_HostDBSwitch($CHAR_REALM), $DBUser, $DBPassword,_CharacterDBSwitch($CHAR_REALM),$DB_PORT);
             mysqli_query($connection,"
-            INSERT INTO `characters`(`guid`,`account`,`name`,`level`,`gender`,`totalHonorPoints`,`arenaPoints`,`totalKills`,`money`,`class`,`race`,`at_login`,`account`,`taximask`,`speccount`,`online`) VALUES (
-            ". $GUID .",'". _X($connection,$CHAR_NAME) ."',". (int)$CharLevel .",". (int)$char_gender .",". (int)$char_honorpoints .",". (int)$char_arenapoints .",
-            ". (int)$char_totalkills .",".(int)$char_money .",". $ClassID .",". $RaceID .", 0x180, 1, \"0 0 0 0 0 0 0 0 0 0 0 0 0 0\",". (int)$char_speccount .", 0);");
+            INSERT INTO `characters`(`guid`,`account`,`name`,`level`,`gender`,`totalHonorPoints`,`arenaPoints`,`totalKills`,`money`,`class`,`race`,`at_login`,`taximask`,`online`) VALUES (
+            ". $GUID .",0,'". _X($connection,$CHAR_NAME) ."',". (int)$CharLevel .",". (int)$char_gender .",". (int)$char_honorpoints .",". (int)$char_arenapoints .",
+            ". (int)$char_totalkills .",".(int)$char_money .",". $ClassID .",". $RaceID .", 0x01, \"0 0 0 0 0 0 0 0 0 0 0 0 0 0\", 0);") or die(mysqli_error($connection));
             $QUERYFOREXECUTE    = $QUERYFOREXECUTE. "
             INSERT INTO `character_transfer` VALUES (". $GUID .",". $CHAR_ACCOUNT_ID .",". $GM_ACCOUNT_ID .",". $ID .");
 

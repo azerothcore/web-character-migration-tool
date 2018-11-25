@@ -19,7 +19,7 @@
 
         $connection = mysqli_connect($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $DB_PORT);
         _SelectDB($connection);
-        $result = mysqli_query($connection,"SELECT `name`,`address`,`port` FROM `realmlist` WHERE `id` = ". $RealmID .";", $connection) or die(mysqli_error($connection));
+        $result = mysqli_query($connection,"SELECT `name`,`address`,`port` FROM `realmlist` WHERE `id` = ". $RealmID .";") or die(mysqli_error($connection));
         $row    = mysqli_fetch_array($result);
         $SPT    = $row["port"];
         $SNA    = $row["name"];
@@ -36,7 +36,7 @@
             $realson    = $write[94];
         } else if(mb_strlen($CHAR_NAME, 'UTF-8') > 16 && mb_strlen($CHAR_NAME, 'UTF-8') > 1) {
             $realson    = $write[95];
-        } else if(_CheckCharacterName(_HostDBSwitch($RealmID), $DBUser, $DBPassword, _CharacterDBSwitch($RealmID), $CHAR_NAME) > 0) {
+        } else if(_CheckCharacterName(_HostDBSwitch($RealmID), $DB_PORT, $DBUser, $DBPassword, _CharacterDBSwitch($RealmID), $CHAR_NAME) > 0) {
             $realson    = $write[96] . $CHAR_NAME . $write[97];
         } else if(!_ServerOn($SIP, $SPT))
             $realson    = "Realm: \"". $SNA ."\" <u>OFFLINE!</u>";
@@ -45,12 +45,12 @@
             Step2Form($realson, $write[90]);
         } else {
             $_SESSION['STEP2']  = "NO";
-            UpdateCharacterName(_HostDBSwitch($RealmID), $DBUser, $DBPassword, _CharacterDBSwitch($RealmID), $CHAR_NAME, $GUID);
-            _TalentsReset(_HostDBSwitch($RealmID), $DBUser, $DBPassword, _CharacterDBSwitch($RealmID), $GUID);
-            _PreparateMails(LoadItemRoW($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $ID),
+            UpdateCharacterName(_HostDBSwitch($RealmID), $DB_PORT, $DBUser, $DBPassword, _CharacterDBSwitch($RealmID), $CHAR_NAME, $GUID);
+            _TalentsReset(_HostDBSwitch($RealmID), $DB_PORT, $DBUser, $DBPassword, _CharacterDBSwitch($RealmID), $GUID);
+            _PreparateMails(LoadItemRoW($AccountDBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $ID),
             $CHAR_NAME, $TransferLetterTitle, $TransferLetterMessage, $SOAPUser, $SOAPPassword, _SOAPPSwitch($RealmID),_SOAPHSwitch($RealmID), _SOAPURISwitch($RealmID));
-            UpdateDumpSTATUSandNAME($AccountDBHost, $DBUser, $DBPassword, $AccountDB, $ID, $CHAR_NAME, 0);
-            MoveToGMAccount(_HostDBSwitch($RealmID), $DBUser, $DBPassword, _CharacterDBSwitch($RealmID), $GUID);
+            UpdateDumpSTATUSandNAME($AccountDBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $ID, $CHAR_NAME, 0);
+            MoveToGMAccount(_HostDBSwitch($RealmID), $DB_PORT, $DBUser, $DBPassword, _CharacterDBSwitch($RealmID), $GUID);
 
             echo "<font color = \"green\">". $write[91] ."</font>";
         }

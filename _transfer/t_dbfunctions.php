@@ -130,33 +130,15 @@
     function GetCharacterGuid($DBHost, $DB_PORT, $DBUser, $DBPassword, $CharactersDB) {
         $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$CharactersDB,$DB_PORT) or die(mysqli_error($connection));
         _SelectDB($connection);
-        $query = mysqli_query($connection,"SELECT MAX(`guid`) FROM `characters` WHERE `guid` BETWEEN 1000000 AND 1999999;") or die(mysqli_error($connection));
+        $query = mysqli_query($connection,"SELECT MAX(`guid`) FROM `characters` WHERE `guid`;") or die(mysqli_error($connection));
         $row = mysqli_fetch_array($query);
         mysqli_close($connection);
-        return $row[0];
+		if(empty($row[0]))
+		{
+			return 1;
+		}
+        return $row[0] + 1;
     }
-
-    function UpdateCharacterGuid($DBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $RealmID, $GUID) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
-        
-        $query = mysqli_query($connection,"UPDATE `account_transfer_guid` SET `Realm". $RealmID ."` = ". $GUID .";") or die(mysqli_error($connection));
-        mysqli_close($connection);
-    }
-
-    function CheckCharacterGuid($DBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $RealmID, $GUID) {
-        $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$AccountDB,$DB_PORT) or die(mysqli_error($connection));
-        
-        $query = mysqli_query($connection,"SELECT MAX(`Realm". $RealmID ."`) FROM `account_transfer_guid`;") or die(mysqli_error($connection));
-        $row = mysqli_fetch_array($query);
-        mysqli_close($connection);
-        if($row[0] > $GUID)
-            $GUID = $row[0] + 1;
-        else
-            $GUID = $GUID + 1;
-        UpdateCharacterGuid($DBHost, $DB_PORT, $DBUser, $DBPassword, $AccountDB, $RealmID, $GUID);
-        return $GUID;
-    }
-
     function CancelORDenyCharacterTransfer($DBHost, $DB_PORT, $DBUser, $DBPassword, $CharactersDB, $GUID, $STORAGE) {
         $connection = mysqli_connect($DBHost, $DBUser, $DBPassword,$CharactersDB,$DB_PORT) or die(mysqli_error($connection));
         _SelectDB($connection);

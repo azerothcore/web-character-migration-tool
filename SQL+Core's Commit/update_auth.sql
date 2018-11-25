@@ -58,7 +58,7 @@ CREATE TABLE `account_transfer_queue` (
    PRIMARY KEY (`id`)
 ) ENGINE=MYISAM DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `account_transfer_guid`;
+/*DROP TABLE IF EXISTS `account_transfer_guid`;
 CREATE TABLE `account_transfer_guid` (
   `Realm1` INT(11) NOT NULL DEFAULT 0,
   `Realm2` INT(11) NOT NULL DEFAULT 0,
@@ -68,5 +68,5 @@ CREATE TABLE `account_transfer_guid` (
 ) ENGINE=MYISAM DEFAULT CHARSET=utf8;
 -- DO NOT TOUCH THAT!
 INSERT INTO `account_transfer_guid` VALUES (0, 0, 0, 0, 0);
--- Delete not existed gm acccess
+-- Delete not existed gm acccess*/
 DELETE FROM `account_access` WHERE `id` NOT IN (SELECT `id` FROM `account`);
