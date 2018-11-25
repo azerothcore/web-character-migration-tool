@@ -299,13 +299,13 @@
   		}
   		catch (Exception $e)
   		{
-			die("Something went wrong! An administrator has been noticed and will send your order as soon as possible.");
+			//die("Something went wrong! An administrator has been noticed and will send your order as soon as possible.");
 		}
 		
         //$SOAP = new SOAP(array("soap_user" => "". $SOAPUser ."", "soap_pass" => "". $SOAPPassword ."", "soap_port" => "". $SOAPPort  ."", "addr" => "". $SOAPHost ."", "uri" => "". $URI .""));
         //$SOAP->fetch($COMMAND);
         //echo "<br>". $SOAP->fetch("". $COMMAND ."") ."<br>";
-        unset($SOAP);
+        unset($conn);
     }
 
     class SOAP {
