@@ -5,7 +5,7 @@
             <tr><td colspan = "3" style = "color:#ffffff; text-align : center; font-size : 10px;"><p>
                 <strong>
                 <br>
-                AZEROTHCORE 2018 - Updated By <a href="https://masterking32.com" target="_Blank">MasterkinG32.CoM</a> </strong>
+                AZEROTHCORE 2019 - Updated By <a href="https://masterking32.com" target="_Blank" style="color:#fff">MasterkinG32.CoM</a> </strong>
             </p></tr>
         </table>
     </body>

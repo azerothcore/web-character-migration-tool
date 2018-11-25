@@ -27,3 +27,5 @@ Apply patch inside "SQL+Core's Commit/at_login.patch" to your core.
 Import SQL files to your databases, Inside "SQL+Core's Commit".
 
 Config file "core/init.php" and "_transfer/t_config.php"
+
+In your database Table, 'account_transfer_blacklist' you can edit or add some servers to your transfer black list.
