@@ -72,4 +72,4 @@ function keyDown(event)
 }
 </script>
 <img src = "template/images/logon_spodek.jpg">
-<?php include('template/t_footer.php');?>
+<?php include('template/t_footer.php'); ?>
