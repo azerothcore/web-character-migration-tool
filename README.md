@@ -20,7 +20,6 @@ World Server: enable SOAP module
 
 How to Install
 ========
-Apply patch inside "SQL+Core's Commit/at_login.patch" to your core.
 
 Import SQL files to your databases, Inside "SQL+Core's Commit".
 
