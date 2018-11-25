@@ -35,10 +35,11 @@
 
     function _PreparateMails($row, $PlayerName, $TransferLetterTitle, $TransferLetterMessage, $SOAPUser, $SOAPPassword, $SOAPPort, $SOAPHost, $URI) {
         $item_array = explode(" ", trim($row));
-        for($i = 0; $i < count($item_array); $i++) {
+		foreach($item_array as $item)
+		{
 			RemoteCommandWithSOAP($SOAPUser, $SOAPPassword, $SOAPPort, $SOAPHost, $URI,
-			trim("send items ". $PlayerName ." \"". $TransferLetterTitle ."\" \"". $TransferLetterMessage ."\" ". $item_array[$i]));
-        }
+			trim("send items ". $PlayerName ." \"". $TransferLetterTitle ."\" \"". $TransferLetterMessage ."\" ". $item));
+		}
     }
 
     function RemoveRaceBonus($RaceID, $SkillID, $value) {

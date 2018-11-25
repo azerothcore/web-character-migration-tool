@@ -285,7 +285,6 @@
     }
 
     function RemoteCommandWithSOAP($SOAPUser, $SOAPPassword, $SOAPPort, $SOAPHost, $URI, $COMMAND) {
-		
 		$conn = new SoapClient(NULL, array(
 			'location' => "http://$SOAPHost:$SOAPPort/",
 			'uri'      => $URI,
