@@ -29,6 +29,6 @@ In your database Table, 'account_transfer_blacklist' you can edit or add some se
 
 What is new?
 ========
-Updated for support last version of PHP.
+Updated to support last version of PHP (5.3-7.x).
 
-Fix all bugs.
+Fixed all bugs up to AzerothCore rev d34e5329dfe6df44143219b3b9521610ee142ce2.
