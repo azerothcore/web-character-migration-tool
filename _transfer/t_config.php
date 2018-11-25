@@ -1,4 +1,10 @@
 <?php
+/*
+ * Copyright (C) 2019+ MasterkinG32 <https://masterking32.com>
+ * Copyright (C) 2017+ AzerothCore <www.azerothcore.org>, released under GNU GPL v2 license: http://github.com/azerothcore/azerothcore-wotlk/LICENSE-GPL2
+ * Copyright (C) 2008-2016 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
+*/
 
     $TransferLetterTitle    = "Transfer System";                    // Letter Title
     $TransferLetterMessage  = "Items from Character Transfer";      // Letter Message
@@ -27,7 +33,7 @@
     $MaxAP              = 5000;             // Max Arena Points, if more then it, then only this.
                                             // if do not exist stay -1, if no then put info
     function _SOAPURISwitch($ID) {          // Realm ID = Realm ID From Realmlist table
-        $SOAPURI1  = "MC";                  // Realm 1 SOAP URI
+        $SOAPURI1  = "urn:TC";              // Realm 1 SOAP URI
         $SOAPURI2  = -1;                    // Realm 2 SOAP URI
         $SOAPURI3  = -1;                    // Realm 3 SOAP URI
         $SOAPURI4  = -1;                    // Realm 4 SOAP URI

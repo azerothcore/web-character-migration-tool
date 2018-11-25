@@ -285,8 +285,25 @@
     }
 
     function RemoteCommandWithSOAP($SOAPUser, $SOAPPassword, $SOAPPort, $SOAPHost, $URI, $COMMAND) {
-        $SOAP = new SOAP(array("soap_user" => "". $SOAPUser ."", "soap_pass" => "". $SOAPPassword ."", "soap_port" => "". $SOAPPort  ."", "addr" => "". $SOAPHost ."", "uri" => "". $URI .""));
-        $SOAP->fetch($COMMAND);
+		
+		$conn = new SoapClient(NULL, array(
+			'location' => "http://$SOAPHost:$SOAPPort/",
+			'uri'      => $URI,
+			'style'    => SOAP_RPC,
+			'login'    => $SOAPUser,
+			'password' => $SOAPPassword
+		));
+		try 
+  		{
+   			$conn->executeCommand(new SoapParam($COMMAND, 'command'));
+  		}
+  		catch (Exception $e)
+  		{
+			die("Something went wrong! An administrator has been noticed and will send your order as soon as possible.");
+		}
+		
+        //$SOAP = new SOAP(array("soap_user" => "". $SOAPUser ."", "soap_pass" => "". $SOAPPassword ."", "soap_port" => "". $SOAPPort  ."", "addr" => "". $SOAPHost ."", "uri" => "". $URI .""));
+        //$SOAP->fetch($COMMAND);
         //echo "<br>". $SOAP->fetch("". $COMMAND ."") ."<br>";
         unset($SOAP);
     }

@@ -43,13 +43,13 @@
             $toSend .= " ";
             if($by10 == 10) {
                 RemoteCommandWithSOAP($SOAPUser, $SOAPPassword, $SOAPPort, $SOAPHost, $URI,
-                trim(".send items ". $PlayerName ." \"". $TransferLetterTitle ."\" \"". $TransferLetterMessage ."\" ". $toSend));
+                trim("send items ". $PlayerName ." \"". $TransferLetterTitle ."\" \"". $TransferLetterMessage ."\" ". $toSend));
                 $needSend = $needSend - $by10;
                 $by10    = 1;
                 $toSend = "";
             } else if($needSend - $by10 == 0) {
                 RemoteCommandWithSOAP($SOAPUser, $SOAPPassword, $SOAPPort, $SOAPHost, $URI,
-                trim(".send items ". $PlayerName ." \"". $TransferLetterTitle ."\" \"". $TransferLetterMessage ."\" ". $toSend));
+                trim("send items ". $PlayerName ." \"". $TransferLetterTitle ."\" \"". $TransferLetterMessage ."\" ". $toSend));
                 $toSend = "";
             } else $by10++;
         }
