@@ -23,6 +23,8 @@
                 if(_CheckGMAccess($AccountDBHost,$DB_PORT, $DBUser, $DBPassword, $AccountDB, $ACCOUNT_ID, $GMLevel)) {
                     ApproveCharacterTransfer(_HostDBSwitch($RealmID),$DB_PORT, $DBUser, $DBPassword, _CharacterDBSwitch($RealmID), $GUID);
                     UpdateDumpStatus($AccountDBHost,$DB_PORT, $DBUser, $DBPassword, $AccountDB, $ID, 1);
+					ob_end_flush();
+                    die("Done");
                 } else die("ACCESS DENIED:");
             } else die("NOT \"IN PROGRESS\" STATUS");
         } else die("LOG OFF WITH THIS CHARACTER! BEFORE MAKE ANY ACTIONS!");

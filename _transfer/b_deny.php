@@ -29,6 +29,8 @@ sleep(5);
                     AddComment($AccountDBHost,$DB_PORT, $DBUser, $DBPassword, $AccountDB, $ID, $REASON);
                     CancelORDenyCharacterTransfer(_HostDBSwitch($RealmID),$DB_PORT, $DBUser, $DBPassword, _CharacterDBSwitch($RealmID), $GUID, $STORAGE);
                     UpdateDumpStatus($AccountDBHost,$DB_PORT, $DBUser, $DBPassword, $AccountDB, $ID, 2);
+					ob_end_flush();
+                    die("Transfer with ID: ". $ID ." Canceled");
                 } else die("ACCESS DENIED");
             } else die("NOT \"IN PROGRESS\" STATUS");
         } else die("LOG OFF WITH THIS CHARACTER! BEFORE MAKE ANY ACTIONS!");
