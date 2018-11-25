@@ -56,7 +56,7 @@ class User {
 		$hash = strtoupper(sha1(strtoupper(($username)).":".strtoupper(($password))));
 
 		if($user) {
-			if($this->data()->sha_pass_hash === $hash) {
+			if(strtoupper($this->data()->sha_pass_hash) == $hash) {
 				$_SESSION["id"] = $this->data()->id;
 				Session::put($this->_sessionName, $this->data()->id);
 
